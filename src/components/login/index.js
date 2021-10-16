@@ -9,7 +9,7 @@ const LoginButton = () => {
   return (
     <div className="d-flex justify-content-center">
       <Button 
-        className="btn" pill 
+        className="btn text" pill 
         onClick={() => loginWithRedirect()}
       >
         Click aquí para iniciar sesión

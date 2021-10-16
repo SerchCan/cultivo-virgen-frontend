@@ -9,7 +9,7 @@ const Login = () => (
       <Col>
         <Card small className="mb-4">
           <CardHeader className="border-bottom">
-            <h6 className="m-0 text-center">Iniciar sesión</h6>
+            <p className="m-0 text-center title">Iniciar sesión</p>
           </CardHeader>
           <CardBody className="p-4">
             <LoginComponent/>
