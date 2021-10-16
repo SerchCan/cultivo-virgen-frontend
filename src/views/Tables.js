@@ -1,20 +1,7 @@
 import React from "react";
 import { Container, Row, Col, Card, CardHeader, CardBody } from "shards-react";
-import { DataTable } from "react-editable-table";
 import PageTitle from "../components/common/PageTitle";
 
-var columns = [
-  { title: 'Site', prop: 'site'  },
-  { title: 'Country', prop: 'country' },
-  { title: 'Domain', prop: 'domain', validation: /^[a-zA-Z0-9][a-zA-Z0-9-]{1,61}[a-zA-Z0-9](?:\.[a-zA-Z]{2,})+$/ },
-  { title: 'Phone', prop: 'phone', editable: false }
-];
- 
-var data = [
-  { site: 'google', country: 'USA', domain: 'google.com', phone: 'phone value' }
-  // It also supports arrays
-  // [ 'name value', 'city value', 'address value', 'phone value' ]
-];
 const Tables = () => (
   <Container fluid className="main-content-container px-4">
     {/* Page Header */}
@@ -30,17 +17,6 @@ const Tables = () => (
             <h6 className="m-0">Articulos en almacén</h6>
           </CardHeader>
           <CardBody className="p-0 pb-3">
-          <DataTable
-      className="container"
-      keys={[ 'site' ]}
-      columns={columns}
-      initialData={data}
-      initialPageLength={5}
-      initialSortBy={{ prop: 'site', order: 'desc' }}
-      pageLengthOptions={[ 5, 20, 50 ]}
-    />
-
-
             <table className="table mb-0">
               <thead className="bg-light">
                 <tr>
