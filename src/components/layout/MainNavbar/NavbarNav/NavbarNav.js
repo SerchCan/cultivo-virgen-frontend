@@ -6,11 +6,10 @@ import UserActions from "./UserActions";
 import { useAuth0 } from "@auth0/auth0-react";
 
 export default () => { 
-  const { logout } = useAuth0();
-
+  const { logout, user } = useAuth0();
   return(
     <Nav navbar className="border-left flex-row">
       <Notifications />
-      <UserActions logout={logout}/>
+      <UserActions logout={logout} user={user}/>
     </Nav>
   )};
