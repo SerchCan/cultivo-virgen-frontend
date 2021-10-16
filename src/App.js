@@ -31,7 +31,7 @@ export default () => {
               } 
               return (
                 <route.layout {...props}>
-                  <route.component {...props} />
+                  <route.component {...props} user={user}  />
                 </route.layout>
               );
             })}
