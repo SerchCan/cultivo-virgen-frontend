@@ -3,12 +3,12 @@ export default function() {
     {
       title: "Resumen General",
       to: "/blog-overview",
-      htmlBefore: '<i class="material-icons">edit</i>',
+      htmlBefore: '<i class="material-icons">insert_chart</i>',
       htmlAfter: ""
     },
     {
       title: "Alimentación",
-      htmlBefore: '<i class="material-icons">view_module</i>',
+      htmlBefore: '<i class="material-icons">content_paste</i>',
       to: "/components-overview",
     },
     {
@@ -23,7 +23,7 @@ export default function() {
     },
     {
       title: "Reportes",
-      htmlBefore: '<i class="material-icons">error</i>',
+      htmlBefore: '<i class="material-icons">picture_as_pdf</i>',
       to: "/errors",
     }
   ];
