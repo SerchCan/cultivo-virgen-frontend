@@ -102,7 +102,7 @@ class UsersOverview extends React.Component {
                 size="sm"
                 className="d-flex btn-white ml-auto mr-auto ml-sm-auto mr-sm-0 mt-3 mt-sm-0"
               >
-                View Full Report &rarr;
+                Generar reporte &rarr;
               </Button>
             </Col>
           </Row>
@@ -133,12 +133,12 @@ UsersOverview.propTypes = {
 };
 
 UsersOverview.defaultProps = {
-  title: "Users Overview",
+  title: "Comparativa mensual de tilapias",
   chartData: {
     labels: Array.from(new Array(30), (_, i) => (i === 0 ? 1 : i)),
     datasets: [
       {
-        label: "Current Month",
+        label: "Mes actual",
         fill: "start",
         data: [
           500,
@@ -181,7 +181,7 @@ UsersOverview.defaultProps = {
         pointHoverRadius: 3
       },
       {
-        label: "Past Month",
+        label: "Mes pasado",
         fill: "start",
         data: [
           380,
