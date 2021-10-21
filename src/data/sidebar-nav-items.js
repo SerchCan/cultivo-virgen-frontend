@@ -12,7 +12,7 @@ export default function() {
       to: "/components-overview",
     },
     {
-      title: "Almacen",
+      title: "Almacén",
       htmlBefore: '<i class="material-icons">table_chart</i>',
       to: "/tables",
     },
