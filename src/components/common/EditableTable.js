@@ -1,6 +1,5 @@
 import React, { Component } from "react"
-
-
+import api from '../../utils/api';
 class EditableTable extends Component {
   // endpoints 
   // fetchEndpoint
@@ -32,32 +31,19 @@ class EditableTable extends Component {
     this.onChangeEditingField = this.onChangeEditingField.bind(this);
     this.addRow = this.addRow.bind(this);
   }
-  componentDidMount() {
+  async componentDidMount() {
     // do fetch in here ....
     const { isEmptyTable } = this.props;
     if (!isEmptyTable) {
-      this.fetchFromApi()
+      await this.fetchFromApi()
     } else {
       const { columns } = this.props;
       this.setState({ columns: columns })
     }
   }
-  fetchFromApi() {
-    const dummyResponse = {
-      values: [
-        { id: 1, a: "Hola", b: "que", c: "onda1" },
-        { id: 2, a: "Hola", b: "que", c: "onda2" },
-        { id: 3, a: "Hola", b: "que", c: "onda3" },
-        { id: 4, a: "Hola", b: "que", c: "onda4" },
-        { id: 5, a: "Hola", b: "que", c: "onda5" },
-        { id: 6, a: "Hola", b: "que", c: "onda6" },
-      ],
-      columns: [
-        "id", "a", "b", "c"
-      ],
-      totalOfRecords: 100
-    }
-    this.setState(dummyResponse)
+  async fetchFromApi() {
+    const {data} = await api.getFromEndpoint(this.props.fetchEndpoint);
+    this.setState(data)
 
   }
   mapColumns() {
@@ -119,20 +105,34 @@ class EditableTable extends Component {
   addActions(id) {
     return <td>
       <button onClick={() => this.addToEditedIds(id)}>edit</button>{' '}
-      <button>remove</button>
+      <button onClick={() => this.onRemoveEndpoint(id)}>remove</button>
     </td>
   }
   addActionsWhenEditing(id) {
     return <td>
-      <button onClick={() => this.onEditEndpoint(id)}>Save</button>{' '}
+      <button onClick={async() => await this.onEditEndpoint(id)}>Save</button>{' '}
       <button onClick={() => this.RemoveFromEditList(id)}>Cancel</button>
     </td>
   }
-  RemoveFromEditList(selectedId) {
+  async onRemoveEndpoint(id){
+    const valueIndex = this.state.values.findIndex((value)=> value.id==id);
+    await api.deleteFromEndpoint(`${this.props.onDeleteEndpoint}/${id}`,this.state.values[valueIndex])
+    if (!this.props.isEmptyTable) {
+      await this.fetchFromApi()
+    }
+  }
+  async onEditEndpoint(id){
+    const valueIndex = this.state.values.findIndex((value)=> value.id==id);
+    await api.putFromEndpoint(`${this.props.onEditEndpoint}/${id}`,this.state.values[valueIndex])
+    this.RemoveFromEditList(id);
+  }
+  async RemoveFromEditList(selectedId) {
     let { editedIds } = this.state;
     let filter = editedIds.filter(id => id != selectedId);
     this.setState({ editedIds: filter })
-    this.fetchFromApi();
+    if (!this.props.isEmptyTable) {
+      await this.fetchFromApi()
+    }
   }
   addToEditedIds(id) {
     let { editedIds } = this.state;

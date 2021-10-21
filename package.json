@@ -5,6 +5,7 @@
   "homepage": "./",
   "dependencies": {
     "@auth0/auth0-react": "^1.8.0",
+    "axios": "^0.23.0",
     "camelize": "^1.0.0",
     "chart.js": "^2.7.3",
     "classnames": "^2.2.6",
