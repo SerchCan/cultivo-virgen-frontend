@@ -28,13 +28,13 @@ class SidebarMainNavbar extends React.Component {
           <NavbarBrand
             className="w-100 mr-0"
             href="#"
-            style={{ lineHeight: "25px" }}
+            style={{ lineHeight: "45px" }}
           >
             <div className="d-table m-auto">
               <img
                 id="main-logo"
-                className="d-inline-block align-top mr-1"
-                style={{ maxWidth: "25px" }}
+                className="d-inline-block align-middle mr-1"
+                style={{ maxWidth: "40px" }}
                 src={require("../../../images/logo-black.png")}
                 alt="Cultivo Virgen"
               />
