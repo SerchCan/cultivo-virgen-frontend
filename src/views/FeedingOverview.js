@@ -7,18 +7,21 @@ import {
 } from "shards-react";
 import PageTitle from "../components/common/PageTitle";
 import moment from 'moment'
+import api from '../utils/api'
 class FeedingOverview extends Component {
   constructor(props) {
     super(props);
     this.state = {
       bitacore: [],
-      date: moment()
+      date: moment(),
     };
     this.mapColumns = this.mapColumns.bind(this);
     this.previousMonth = this.previousMonth.bind(this);
     this.nextMonth = this.nextMonth.bind(this);
     this.onChangeInput = this.onChangeInput.bind(this);
     this.loadDays = this.loadDays.bind(this);
+    this.fetchLogbook = this.fetchLogbook.bind(this);
+    this.save = this.save.bind(this);
   }
   loadDays(){
     const { date } = this.state;
@@ -40,8 +43,43 @@ class FeedingOverview extends Component {
     }
     this.setState({ bitacore: initial })
   }
-  componentDidMount() {
-   this.loadDays();
+  async fetchLogbook(){
+    const {date} = this.state;
+    const {user} = this.props;
+    let month = date.format("M") 
+    let year = date.format("Y")
+
+    const {data} = await api.getLogbook({
+      month,
+      year,
+      employee: user.email
+    })
+    if(!data){
+      console.log("loaded manually")
+      this.loadDays();
+    } else {
+      console.log("loaded from db")
+      this.loadFromLogbook(data.logbooks);
+    }
+  }
+  async componentDidMount() {
+   await this.fetchLogbook();
+  }
+
+  async save(){
+    const {date, bitacore} = this.state;
+    const {user} = this.props;
+    let month = date.format("M") 
+    let year = date.format("Y")
+    await api.saveLogbook({
+      date:`${year}-${month}-01`,
+      employee: user.email,
+      logbooks: JSON.stringify(bitacore)
+    });
+  }
+  loadFromLogbook(logbooks){
+    let newLogbook = JSON.parse(logbooks);
+    this.setState({bitacore:newLogbook});
   }
   onChangeInput(e, row, column) {
     const { bitacore } = this.state;
@@ -51,12 +89,12 @@ class FeedingOverview extends Component {
   previousMonth(){
     const {date} = this.state;
     date.subtract(1,'month');
-    this.setState({date}, this.loadDays)
+    this.setState({date}, this.fetchLogbook)
   }
   nextMonth(){
     const {date} = this.state;
     date.add(1,'month');
-    this.setState({date}, this.loadDays)
+    this.setState({date}, this.fetchLogbook)
   }
   mapColumns() {
     const { bitacore } = this.state;
@@ -99,6 +137,9 @@ class FeedingOverview extends Component {
             {date.format('M-Y')}
             {' '}
             <button class="btn btn-primary ml-4 mb-2" onClick={this.nextMonth}>Siguiente</button>
+
+            <button class="btn btn-primary mr-4 mb-2"  onClick={this.save}>Guardar</button>
+
           </div>
 
             <Col className="mb-4">

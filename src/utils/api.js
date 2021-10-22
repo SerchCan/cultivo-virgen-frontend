@@ -10,7 +10,7 @@ const api = {
   postProduct: async()=> await axios.post('/product'),
   getProducts: async()=> await axios.get('/product/find'),
 
-  saveLogbook: async()=> await axios.post('/logbook'),
-  getLogbook: async()=> await axios.get('/logbook'),
+  saveLogbook: async(params={})=> await axios.post('/logbook/save',params),
+  getLogbook: async(params={})=> await axios.post('/logbook/get',params),
 }
 export default api;

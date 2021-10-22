@@ -9,7 +9,7 @@ import BlogOverview from "./views/BlogOverview";
 import UserProfileLite from "./views/UserProfileLite";
 import Errors from "./views/Errors";
 import ComponentsOverview from "./views/ComponentsOverview";
-import FeedingsOverview from "./views/FeedingOverview";
+import FeedingsMaster from "./views/FeedingMaster";
 import Tables from "./views/Tables";
 import Login from "./views/Login";
 
@@ -49,7 +49,7 @@ export default [
   {
     path: "/feedings",
     layout: DefaultLayout,
-    component: FeedingsOverview
+    component: FeedingsMaster
   },
   {
     path: "/tables",
