@@ -9,5 +9,8 @@ const api = {
   deleteFromEndpoint: async(endpoint,params={}) => await axios.delete(endpoint,params),
   postProduct: async()=> await axios.post('/product'),
   getProducts: async()=> await axios.get('/product/find'),
+
+  saveLogbook: async()=> await axios.post('/logbook'),
+  getLogbook: async()=> await axios.get('/logbook'),
 }
 export default api;
