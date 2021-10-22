@@ -30,10 +30,10 @@ export default class UserActions extends React.Component {
   render() {
     const { logout, user } = this.props;
     return (
-      <NavItem tag={Dropdown} caret toggle={this.toggleUserActions}>
+      <NavItem tag={Dropdown}  caret toggle={this.toggleUserActions}>
         <DropdownToggle caret tag={NavLink} className="text-nowrap px-3">
           {" "}
-          <span className="d-none d-md-inline-block pt-3">{user.name}</span>
+          <span className="d-none d-xs-inline-block pt-3">{user.name}</span>
         </DropdownToggle>
         <Collapse tag={DropdownMenu} right small open={this.state.visible}>
           <DropdownItem tag={Link} to="user-profile">
