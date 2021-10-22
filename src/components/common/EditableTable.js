@@ -1,5 +1,10 @@
 import React, { Component } from "react"
 import api from '../../utils/api';
+import { AiOutlineEdit, AiTwotoneSave } from 'react-icons/ai';
+import { FiTrash } from 'react-icons/fi';
+import { TiCancel } from 'react-icons/ti';
+import { IoIosAddCircleOutline } from 'react-icons/io';
+
 class EditableTable extends Component {
   // endpoints 
   // fetchEndpoint
@@ -104,14 +109,14 @@ class EditableTable extends Component {
   }
   addActions(id) {
     return <td>
-      <button onClick={() => this.addToEditedIds(id)}>edit</button>{' '}
-      <button onClick={() => this.onRemoveEndpoint(id)}>remove</button>
+      <button className="btn btn-info p-1" onClick={() => this.addToEditedIds(id)}><AiOutlineEdit size={24} ></AiOutlineEdit></button>{' '}
+      <button className="btn btn-danger p-1" onClick={() => this.onRemoveEndpoint(id)}><FiTrash size={24} ></FiTrash></button>
     </td>
   }
   addActionsWhenEditing(id) {
     return <td>
-      <button onClick={async () => await this.onEditEndpoint(id)}>Save</button>{' '}
-      <button onClick={() => this.RemoveFromEditList(id)}>Cancel</button>
+      <button className="btn btn-success p-1"  onClick={async () => await this.onEditEndpoint(id)}><AiTwotoneSave size={24}/></button>{' '}
+      <button className="btn btn-danger p-1"  onClick={() => this.RemoveFromEditList(id)}><TiCancel size={24}/></button>
     </td>
   }
   async onRemoveEndpoint(id) {
@@ -166,7 +171,7 @@ class EditableTable extends Component {
 
     return (
       <div className="container " style={{ overflowY: "hidden", overflowX: "scroll" }}>
-        <button className="btn btn-info" onClick={() => this.addRow()}> Agregar </button>
+        <button className="btn btn-info pl-3 pr-3 pt-1 pb-1" onClick={() => this.addRow()}><IoIosAddCircleOutline size={24} /> </button>
         <table className="table mb-0">
           <thead className="bg-light">
             {this.mapColumns()}
