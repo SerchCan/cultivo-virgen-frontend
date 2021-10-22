@@ -42,7 +42,7 @@ class EditableTable extends Component {
     }
   }
   async fetchFromApi() {
-    const {data} = await api.getFromEndpoint(this.props.fetchEndpoint);
+    const { data } = await api.getFromEndpoint(this.props.fetchEndpoint);
     this.setState(data)
 
   }
@@ -110,20 +110,20 @@ class EditableTable extends Component {
   }
   addActionsWhenEditing(id) {
     return <td>
-      <button onClick={async() => await this.onEditEndpoint(id)}>Save</button>{' '}
+      <button onClick={async () => await this.onEditEndpoint(id)}>Save</button>{' '}
       <button onClick={() => this.RemoveFromEditList(id)}>Cancel</button>
     </td>
   }
-  async onRemoveEndpoint(id){
-    const valueIndex = this.state.values.findIndex((value)=> value.id==id);
-    await api.deleteFromEndpoint(`${this.props.onDeleteEndpoint}/${id}`,this.state.values[valueIndex])
+  async onRemoveEndpoint(id) {
+    const valueIndex = this.state.values.findIndex((value) => value.id == id);
+    await api.deleteFromEndpoint(`${this.props.onDeleteEndpoint}/${id}`, this.state.values[valueIndex])
     if (!this.props.isEmptyTable) {
       await this.fetchFromApi()
     }
   }
-  async onEditEndpoint(id){
-    const valueIndex = this.state.values.findIndex((value)=> value.id==id);
-    await api.putFromEndpoint(`${this.props.onEditEndpoint}/${id}`,this.state.values[valueIndex])
+  async onEditEndpoint(id) {
+    const valueIndex = this.state.values.findIndex((value) => value.id == id);
+    await api.putFromEndpoint(`${this.props.onEditEndpoint}/${id}`, this.state.values[valueIndex])
     this.RemoveFromEditList(id);
   }
   async RemoveFromEditList(selectedId) {
@@ -165,7 +165,7 @@ class EditableTable extends Component {
   render() {
 
     return (
-      <div>
+      <div className="container " style={{ overflowY: "hidden", overflowX: "scroll" }}>
         <button className="btn btn-info" onClick={() => this.addRow()}> Agregar </button>
         <table className="table mb-0">
           <thead className="bg-light">

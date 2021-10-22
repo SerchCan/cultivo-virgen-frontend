@@ -17,7 +17,7 @@ const Tables = () => (
             <h6 className="m-0">Articulos en almacén</h6>
           </CardHeader>
           <CardBody className="p-0 pb-3">
-            <EditableTable 
+            <EditableTable
               fetchEndpoint="product/find" 
               onEditEndpoint="product/edit" 
               onDeleteEndpoint= "product/remove"
