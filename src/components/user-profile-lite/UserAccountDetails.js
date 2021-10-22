@@ -28,21 +28,19 @@ const UserAccountDetails = ({ title }) => (
               <Row form>
                 {/* First Name */}
                 <Col md="6" className="form-group">
-                  <label htmlFor="feFirstName">First Name</label>
+                  <label htmlFor="feFirstName">Nombre(s)</label>
                   <FormInput
                     id="feFirstName"
-                    placeholder="First Name"
-                    value="Sierra"
+                    
                     onChange={() => {}}
                   />
                 </Col>
                 {/* Last Name */}
                 <Col md="6" className="form-group">
-                  <label htmlFor="feLastName">Last Name</label>
+                  <label htmlFor="feLastName">Apellido(s)</label>
                   <FormInput
                     id="feLastName"
-                    placeholder="Last Name"
-                    value="Brooks"
+                    
                     onChange={() => {}}
                   />
                 </Col>
@@ -50,74 +48,54 @@ const UserAccountDetails = ({ title }) => (
               <Row form>
                 {/* Email */}
                 <Col md="6" className="form-group">
-                  <label htmlFor="feEmail">Email</label>
+                  <label htmlFor="feEmail">Correo electrónico</label>
                   <FormInput
                     type="email"
                     id="feEmail"
-                    placeholder="Email Address"
-                    value="sierra@example.com"
+          
                     onChange={() => {}}
                     autoComplete="email"
                   />
                 </Col>
-                {/* Password */}
-                <Col md="6" className="form-group">
-                  <label htmlFor="fePassword">Password</label>
-                  <FormInput
-                    type="password"
-                    id="fePassword"
-                    placeholder="Password"
-                    value="EX@MPL#P@$$w0RD"
-                    onChange={() => {}}
-                    autoComplete="current-password"
-                  />
-                </Col>
+               
               </Row>
               <FormGroup>
-                <label htmlFor="feAddress">Address</label>
+                <label htmlFor="feAddress">Dirección</label>
                 <FormInput
                   id="feAddress"
-                  placeholder="Address"
-                  value="1234 Main St."
+                  
                   onChange={() => {}}
                 />
               </FormGroup>
               <Row form>
                 {/* City */}
                 <Col md="6" className="form-group">
-                  <label htmlFor="feCity">City</label>
+                  <label htmlFor="feCity">Ciudad</label>
                   <FormInput
                     id="feCity"
-                    placeholder="City"
+                    
                     onChange={() => {}}
                   />
                 </Col>
                 {/* State */}
                 <Col md="4" className="form-group">
-                  <label htmlFor="feInputState">State</label>
+                  <label htmlFor="feInputState">Estado</label>
                   <FormSelect id="feInputState">
-                    <option>Choose...</option>
-                    <option>...</option>
+                    <option>Quintana Roo</option>
+                    <option>Oaxaca</option>
+                    <option>Yucatan</option>
                   </FormSelect>
                 </Col>
-                {/* Zip Code */}
-                <Col md="2" className="form-group">
-                  <label htmlFor="feZipCode">Zip</label>
-                  <FormInput
-                    id="feZipCode"
-                    placeholder="Zip"
-                    onChange={() => {}}
-                  />
-                </Col>
+                
               </Row>
               <Row form>
                 {/* Description */}
                 <Col md="12" className="form-group">
-                  <label htmlFor="feDescription">Description</label>
+                  <label htmlFor="feDescription">Comentarios</label>
                   <FormTextarea id="feDescription" rows="5" />
                 </Col>
               </Row>
-              <Button theme="accent">Update Account</Button>
+              <Button theme="accent">Guardar cliente</Button>
             </Form>
           </Col>
         </Row>
