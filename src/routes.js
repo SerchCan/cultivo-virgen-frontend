@@ -9,6 +9,7 @@ import BlogOverview from "./views/BlogOverview";
 import UserProfileLite from "./views/UserProfileLite";
 import Errors from "./views/Errors";
 import ComponentsOverview from "./views/ComponentsOverview";
+import FeedingsOverview from "./views/FeedingOverview";
 import Tables from "./views/Tables";
 import Login from "./views/Login";
 
@@ -44,6 +45,11 @@ export default [
     path: "/components-overview",
     layout: DefaultLayout,
     component: ComponentsOverview
+  },
+  {
+    path: "/feedings",
+    layout: DefaultLayout,
+    component: FeedingsOverview
   },
   {
     path: "/tables",

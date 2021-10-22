@@ -9,7 +9,7 @@ export default function() {
     {
       title: "Alimentación",
       htmlBefore: '<i class="material-icons">content_paste</i>',
-      to: "/components-overview",
+      to: "/feedings",
     },
     {
       title: "Almacén",
