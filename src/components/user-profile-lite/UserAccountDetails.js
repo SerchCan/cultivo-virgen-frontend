@@ -112,7 +112,7 @@ UserAccountDetails.propTypes = {
 };
 
 UserAccountDetails.defaultProps = {
-  title: "Account Details"
+  title: "Datos"
 };
 
 export default UserAccountDetails;

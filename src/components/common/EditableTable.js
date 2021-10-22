@@ -107,9 +107,10 @@ class EditableTable extends Component {
       </tr>
     )
   }
+ 
   addActions(id) {
     return <td>
-      <button className="btn btn-info p-1" onClick={() => this.addToEditedIds(id)}><AiOutlineEdit size={24} ></AiOutlineEdit></button>{' '}
+      <button className="btn btn-info p-1"  onClick={() => this.addToEditedIds(id)}><AiOutlineEdit size={24} ></AiOutlineEdit></button>{' '}
       <button className="btn btn-danger p-1" onClick={() => this.onRemoveEndpoint(id)}><FiTrash size={24} ></FiTrash></button>
     </td>
   }

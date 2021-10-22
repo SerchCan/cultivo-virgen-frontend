@@ -92,12 +92,14 @@ class FeedingOverview extends Component {
           </Row>
 
           <Row>
-    
-            <button onClick={this.previousMonth}>prev</button>
+
+         <div class="col-md-12 col-centered " style={{display: 'flex', justifyContent: 'center'}}>
+            <button class="btn btn-primary mr-4 mb-2"  onClick={this.previousMonth}>Anterior</button>
             {' '}
             {date.format('M-Y')}
             {' '}
-            <button onClick={this.nextMonth}>next</button>
+            <button class="btn btn-primary ml-4 mb-2" onClick={this.nextMonth}>Siguiente</button>
+          </div>
 
             <Col className="mb-4">
               <Card small style={{ overflowX: "scroll" }}>
