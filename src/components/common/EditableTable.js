@@ -172,7 +172,10 @@ class EditableTable extends Component {
 
     return (
       <div className="container " style={{ overflowY: "hidden", overflowX: "scroll" }}>
-        <button className="btn btn-info pl-3 pr-3 pt-1 pb-1" onClick={() => this.addRow()}><IoIosAddCircleOutline size={24} /> </button>
+        <div className="container-fluid text-right mt-3 mb-3">
+          <button className="btn btn-info pl-3 pr-3 pt-1 pb-1" onClick={() => this.addRow()}><IoIosAddCircleOutline size={24} /> </button>
+
+        </div>
         <table className="table mb-0">
           <thead className="bg-light">
             {this.mapColumns()}
