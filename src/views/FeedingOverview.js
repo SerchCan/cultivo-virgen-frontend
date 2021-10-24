@@ -134,11 +134,11 @@ class FeedingOverview extends Component {
          <div class="col-md-12 col-centered " style={{display: 'flex', justifyContent: 'center'}}>
             <button class="btn btn-primary mr-4 mb-2"  onClick={this.previousMonth}>Anterior</button>
             {' '}
-            {date.format('M-Y')}
+            <span className="pt-1">{date.format('MMM-Y')}</span>
             {' '}
             <button class="btn btn-primary ml-4 mb-2" onClick={this.nextMonth}>Siguiente</button>
 
-            <button class="btn btn-primary mr-4 mb-2"  onClick={this.save}>Guardar</button>
+            <button class="btn btn-success ml-4 mb-2"  onClick={this.save}>Guardar</button>
 
           </div>
 

@@ -14,7 +14,7 @@ const Tables = () => (
       <Col>
         <Card small className="mb-4">
           <CardHeader className="border-bottom">
-            <h6 className="m-0">Articulos en almacén</h6>
+            <h6 className="m-0">Artículos en almacén</h6>
           </CardHeader>
           <CardBody className="p-0 pb-3">
             <EditableTable
