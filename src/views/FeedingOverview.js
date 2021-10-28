@@ -4,7 +4,8 @@ import {
   Row,
   Col,
   Card,
-  FormInput
+  FormInput,
+  FormSelect,
 } from "shards-react";
 import PageTitle from "../components/common/PageTitle";
 import moment from 'moment'
@@ -15,6 +16,8 @@ class FeedingOverview extends Component {
     this.state = {
       bitacore: [],
       date: moment(),
+      typesOfAliments : ["1.5", "2.5", "3.5 %25","3.5 %32", "4.5 %32", "5.5"]
+
     };
     this.mapColumns = this.mapColumns.bind(this);
     this.previousMonth = this.previousMonth.bind(this);
@@ -40,12 +43,12 @@ class FeedingOverview extends Component {
         "13:00": 0,
         "15:00": 0,
         "16:30": 0,
+        cellNumbers: 0,
         totalPerDay: 0,
-        numberOfAliment: 0,
-        cellNumber: 0,
+        numberOfAliment: "",
         medication: "",
         mortality: 0,
-        observations: ""
+        observations: "",
       })
     }
     this.setState({ bitacore: initial })
@@ -100,7 +103,7 @@ class FeedingOverview extends Component {
     sumColumns.forEach(column => {
       total += Number(bitacore[row][column]);
     });
-    bitacore[row].totalPerDay = total;
+    bitacore[row].totalPerDay = total * Number(bitacore[row].cellNumbers);
     this.setState({bitacore});
   }
   previousMonth(){
@@ -114,7 +117,7 @@ class FeedingOverview extends Component {
     this.setState({date}, this.fetchLogbook)
   }
   mapColumns() {
-    const { bitacore } = this.state;
+    const { bitacore, typesOfAliments=[] } = this.state;
     return (
       bitacore.map((bitacoreRow, index) => (
         <tr key={bitacoreRow.dia}>
@@ -127,9 +130,17 @@ class FeedingOverview extends Component {
           <td><FormInput onChange={e => this.onChangeInput(e, index, "13:00")} value={`${bitacoreRow["13:00"] != 0 ? bitacoreRow["13:00"]:''}`} placeholder={`${bitacoreRow["13:00"]} g`} /></td>
           <td><FormInput onChange={e => this.onChangeInput(e, index, "15:00")} value={`${bitacoreRow["15:00"] != 0 ? bitacoreRow["15:00"]:''}`} placeholder={`${bitacoreRow["15:00"]} g`} /></td>
           <td><FormInput onChange={e => this.onChangeInput(e, index, "16:30")} value={`${bitacoreRow["16:30"] != 0 ? bitacoreRow["16:30"]:''}`} placeholder={`${bitacoreRow["16:30"]} g`} /></td>
+          <td><FormInput type="number" min="0" onChange={e => this.onChangeInput(e, index, "cellNumbers")} value={`${bitacoreRow.cellNumbers}`} /></td>
           <td><FormInput onChange={e => this.onChangeInput(e, index, "totalPerDay")} value={`${bitacoreRow.totalPerDay}`} disabled /></td>
-          <td><FormInput onChange={e => this.onChangeInput(e, index, "numberOfAliment")} value={`${bitacoreRow.numberOfAliment}`} /></td>
-          <td><FormInput onChange={e => this.onChangeInput(e, index, "cellNumber")} value={`${bitacoreRow.cellNumber}`} /></td>
+          <td>
+            <FormSelect
+              style={{minWidth:"100px"}}
+              value={`${bitacoreRow.numberOfAliment}`}
+              onChange={e => this.onChangeInput(e, index, "numberOfAliment")}
+            >
+              { typesOfAliments.map(alimentType=> <option key={alimentType} value={alimentType}>{alimentType}</option>) }
+            </FormSelect>
+            </td>
           <td><FormInput onChange={e => this.onChangeInput(e, index, "medication")} value={`${bitacoreRow.medication}`} /></td>
           <td><FormInput onChange={e => this.onChangeInput(e, index, "mortality")} value={`${bitacoreRow.mortality}`} /></td>
           <td><FormInput onChange={e => this.onChangeInput(e, index, "observations")} value={`${bitacoreRow.observations}`} /></td>
@@ -168,21 +179,23 @@ class FeedingOverview extends Component {
               <Card small style={{ overflowX: "scroll" }}>
                 <table className="table">
                   <thead>
-                    <th scope="col">dia</th>
-                    <th scope="col">07:00</th>
-                    <th scope="col">07:30</th>
-                    <th scope="col">09:30</th>
-                    <th scope="col">11:00</th>
-                    <th scope="col">12:00</th>
-                    <th scope="col">13:00</th>
-                    <th scope="col">15:00</th>
-                    <th scope="col">16:30</th>
-                    <th scope="col">Total por día (g)</th>
-                    <th scope="col"># de alimento</th>
-                    <th scope="col"># de jaula</th>
-                    <th scope="col">medicamento</th>
-                    <th scope="col">mortalidad</th>
-                    <th scope="col">observaciones</th>
+                    <tr>
+                      <th scope="col">dia</th>
+                      <th scope="col">07:00</th>
+                      <th scope="col">07:30</th>
+                      <th scope="col">09:30</th>
+                      <th scope="col">11:00</th>
+                      <th scope="col">12:00</th>
+                      <th scope="col">13:00</th>
+                      <th scope="col">15:00</th>
+                      <th scope="col">16:30</th>
+                      <th scope="col"># de jaulas</th>
+                      <th scope="col">Total por día (g)</th>
+                      <th scope="col"># de alimento</th>
+                      <th scope="col">medicamento</th>
+                      <th scope="col">mortalidad</th>
+                      <th scope="col">observaciones</th>
+                    </tr>
                   </thead>
                   <tbody>
                     {this.mapColumns()}

@@ -59,7 +59,7 @@ class EditableTable extends Component {
           columns.map(column => <th key={column} scope="col" className="border-0"> {column} </th>)
         }
         {/* disable if not admin */}
-        <td>Actions</td>
+        <th>Actions</th>
       </tr>
     );
   }
