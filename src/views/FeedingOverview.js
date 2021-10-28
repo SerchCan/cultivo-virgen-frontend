@@ -4,6 +4,7 @@ import {
   Row,
   Col,
   Card,
+  FormInput
 } from "shards-react";
 import PageTitle from "../components/common/PageTitle";
 import moment from 'moment'
@@ -22,6 +23,7 @@ class FeedingOverview extends Component {
     this.loadDays = this.loadDays.bind(this);
     this.fetchLogbook = this.fetchLogbook.bind(this);
     this.save = this.save.bind(this);
+    this.updateRowTotals = this.updateRowTotals.bind(this);
   }
   loadDays(){
     const { date } = this.state;
@@ -30,9 +32,14 @@ class FeedingOverview extends Component {
     for (let i = 0; i < nrOfDays; i++) {
       initial.push({
         dia: i + 1,
-        "07:00": "",
-        "12:00": "",
-        "15:00": "",
+        "07:00": 0,
+        "07:30": 0,
+        "09:30": 0,
+        "11:00": 0,
+        "12:00": 0,
+        "13:00": 0,
+        "15:00": 0,
+        "16:30": 0,
         totalPerDay: 0,
         numberOfAliment: 0,
         cellNumber: 0,
@@ -84,7 +91,17 @@ class FeedingOverview extends Component {
   onChangeInput(e, row, column) {
     const { bitacore } = this.state;
     bitacore[row][column] = e.target.value;
-    this.setState({ bitacore })
+    this.setState({ bitacore }, this.updateRowTotals(row))
+  }
+  updateRowTotals(row){
+    let total = 0;
+    const { bitacore } = this.state;
+    const sumColumns = ["07:00","07:30","09:30","11:00","12:00","13:00","15:00","16:30"];
+    sumColumns.forEach(column => {
+      total += Number(bitacore[row][column]);
+    });
+    bitacore[row].totalPerDay = total;
+    this.setState({bitacore});
   }
   previousMonth(){
     const {date} = this.state;
@@ -102,15 +119,20 @@ class FeedingOverview extends Component {
       bitacore.map((bitacoreRow, index) => (
         <tr key={bitacoreRow.dia}>
           <td>{`${bitacoreRow.dia}`}</td>
-          <td><input onChange={e => this.onChangeInput(e, index, "07:00")} value={`${bitacoreRow["07:00"]}`} /></td>
-          <td><input onChange={e => this.onChangeInput(e, index, "12:00")} value={`${bitacoreRow["12:00"]}`} /></td>
-          <td><input onChange={e => this.onChangeInput(e, index, "15:00")} value={`${bitacoreRow["15:00"]}`} /></td>
-          <td><input onChange={e => this.onChangeInput(e, index, "totalPerDay")} value={`${bitacoreRow.totalPerDay}`} /></td>
-          <td><input onChange={e => this.onChangeInput(e, index, "numberOfAliment")} value={`${bitacoreRow.numberOfAliment}`} /></td>
-          <td><input onChange={e => this.onChangeInput(e, index, "cellNumber")} value={`${bitacoreRow.cellNumber}`} /></td>
-          <td><input onChange={e => this.onChangeInput(e, index, "medication")} value={`${bitacoreRow.medication}`} /></td>
-          <td><input onChange={e => this.onChangeInput(e, index, "mortality")} value={`${bitacoreRow.mortality}`} /></td>
-          <td><input onChange={e => this.onChangeInput(e, index, "observations")} value={`${bitacoreRow.observations}`} /></td>
+          <td><FormInput onChange={e => this.onChangeInput(e, index, "07:00")} value={`${bitacoreRow["07:00"] != 0 ? bitacoreRow["07:00"]:''}`} placeholder={`${bitacoreRow["07:00"]} g`} /></td>
+          <td><FormInput onChange={e => this.onChangeInput(e, index, "07:30")} value={`${bitacoreRow["07:30"] != 0 ? bitacoreRow["07:30"]:''}`} placeholder={`${bitacoreRow["07:30"]} g`} /></td>
+          <td><FormInput onChange={e => this.onChangeInput(e, index, "09:30")} value={`${bitacoreRow["09:30"] != 0 ? bitacoreRow["09:30"]:''}`} placeholder={`${bitacoreRow["09:30"]} g`} /></td>
+          <td><FormInput onChange={e => this.onChangeInput(e, index, "11:00")} value={`${bitacoreRow["11:00"] != 0 ? bitacoreRow["11:00"]:''}`} placeholder={`${bitacoreRow["11:00"]} g`} /></td>
+          <td><FormInput onChange={e => this.onChangeInput(e, index, "12:00")} value={`${bitacoreRow["12:00"] != 0 ? bitacoreRow["12:00"]:''}`} placeholder={`${bitacoreRow["12:00"]} g`} /></td>
+          <td><FormInput onChange={e => this.onChangeInput(e, index, "13:00")} value={`${bitacoreRow["13:00"] != 0 ? bitacoreRow["13:00"]:''}`} placeholder={`${bitacoreRow["13:00"]} g`} /></td>
+          <td><FormInput onChange={e => this.onChangeInput(e, index, "15:00")} value={`${bitacoreRow["15:00"] != 0 ? bitacoreRow["15:00"]:''}`} placeholder={`${bitacoreRow["15:00"]} g`} /></td>
+          <td><FormInput onChange={e => this.onChangeInput(e, index, "16:30")} value={`${bitacoreRow["16:30"] != 0 ? bitacoreRow["16:30"]:''}`} placeholder={`${bitacoreRow["16:30"]} g`} /></td>
+          <td><FormInput onChange={e => this.onChangeInput(e, index, "totalPerDay")} value={`${bitacoreRow.totalPerDay}`} disabled /></td>
+          <td><FormInput onChange={e => this.onChangeInput(e, index, "numberOfAliment")} value={`${bitacoreRow.numberOfAliment}`} /></td>
+          <td><FormInput onChange={e => this.onChangeInput(e, index, "cellNumber")} value={`${bitacoreRow.cellNumber}`} /></td>
+          <td><FormInput onChange={e => this.onChangeInput(e, index, "medication")} value={`${bitacoreRow.medication}`} /></td>
+          <td><FormInput onChange={e => this.onChangeInput(e, index, "mortality")} value={`${bitacoreRow.mortality}`} /></td>
+          <td><FormInput onChange={e => this.onChangeInput(e, index, "observations")} value={`${bitacoreRow.observations}`} /></td>
         </tr>
       ))
     )
@@ -148,9 +170,14 @@ class FeedingOverview extends Component {
                   <thead>
                     <th scope="col">dia</th>
                     <th scope="col">07:00</th>
+                    <th scope="col">07:30</th>
+                    <th scope="col">09:30</th>
+                    <th scope="col">11:00</th>
                     <th scope="col">12:00</th>
+                    <th scope="col">13:00</th>
                     <th scope="col">15:00</th>
-                    <th scope="col">Total por día</th>
+                    <th scope="col">16:30</th>
+                    <th scope="col">Total por día (g)</th>
                     <th scope="col"># de alimento</th>
                     <th scope="col"># de jaula</th>
                     <th scope="col">medicamento</th>
