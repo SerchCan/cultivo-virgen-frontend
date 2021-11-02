@@ -121,20 +121,20 @@ class EditableTable extends Component {
     </td>
   }
   async onRemoveEndpoint(id) {
-    const valueIndex = this.state.values.findIndex((value) => value.id == id);
+    const valueIndex = this.state.values.findIndex((value) => value.id === id);
     await api.deleteFromEndpoint(`${this.props.onDeleteEndpoint}/${id}`, this.state.values[valueIndex])
     if (!this.props.isEmptyTable) {
       await this.fetchFromApi()
     }
   }
   async onEditEndpoint(id) {
-    const valueIndex = this.state.values.findIndex((value) => value.id == id);
+    const valueIndex = this.state.values.findIndex((value) => value.id === id);
     await api.putFromEndpoint(`${this.props.onEditEndpoint}/${id}`, this.state.values[valueIndex])
     this.RemoveFromEditList(id);
   }
   async RemoveFromEditList(selectedId) {
     let { editedIds } = this.state;
-    let filter = editedIds.filter(id => id != selectedId);
+    let filter = editedIds.filter(id => id !== selectedId);
     this.setState({ editedIds: filter })
     if (!this.props.isEmptyTable) {
       await this.fetchFromApi()
@@ -147,7 +147,7 @@ class EditableTable extends Component {
   }
   onChangeEditingField(event, idOnEdit, column) {
     let { values } = this.state;
-    let searchIndx = values.findIndex(value => value.id == idOnEdit)
+    let searchIndx = values.findIndex(value => value.id === idOnEdit)
     values[searchIndx][column] = event.target.value;
     this.setState({ values })
   }
