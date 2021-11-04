@@ -18,6 +18,7 @@ const Tables = () => (
           </CardHeader>
           <CardBody className="p-0 pb-3">
             <EditableTable
+              searchEndpoint="product/find"
               fetchEndpoint="product/find" 
               onEditEndpoint="product/edit" 
               onDeleteEndpoint= "product/remove"

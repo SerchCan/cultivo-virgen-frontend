@@ -10,6 +10,7 @@ ReactDOM.render(
     domain="cultivo-virgen.us.auth0.com"
     clientId="rLSyuaaXWzngOO9fS8cFtg9VN53wdoDa"
     redirectUri={"https://cultivo-virgen.link/blog-overview"}
+    // redirectUri={"http://localhost:3000/blog-overview"}
   >
     <App />
   </Auth0Provider>, document.getElementById('root'));

@@ -23,6 +23,7 @@ class EditableTable extends Component {
       limit: 10,
       page: 1,
       editedIds: [],
+      search:""
     }
     this.fetchFromApi = this.fetchFromApi.bind(this);
     this.mapColumns = this.mapColumns.bind(this);
@@ -35,6 +36,10 @@ class EditableTable extends Component {
     this.RemoveFromEditList = this.RemoveFromEditList.bind(this);
     this.onChangeEditingField = this.onChangeEditingField.bind(this);
     this.addRow = this.addRow.bind(this);
+    this.searchEndpoint = this.searchEndpoint.bind(this);
+    this.dynamicSearch = this.dynamicSearch.bind(this);
+    
+    
   }
   async componentDidMount() {
     // do fetch in here ....
@@ -107,18 +112,23 @@ class EditableTable extends Component {
       </tr>
     )
   }
- 
+
   addActions(id) {
     return <td>
-      <button className="btn btn-info p-1"  onClick={() => this.addToEditedIds(id)}><AiOutlineEdit size={24} ></AiOutlineEdit></button>{' '}
+      <button className="btn btn-info p-1" onClick={() => this.addToEditedIds(id)}><AiOutlineEdit size={24} ></AiOutlineEdit></button>{' '}
       <button className="btn btn-danger p-1" onClick={() => this.onRemoveEndpoint(id)}><FiTrash size={24} ></FiTrash></button>
     </td>
   }
   addActionsWhenEditing(id) {
     return <td>
-      <button className="btn btn-success p-1"  onClick={async () => await this.onEditEndpoint(id)}><AiTwotoneSave size={24}/></button>{' '}
-      <button className="btn btn-danger p-1"  onClick={() => this.RemoveFromEditList(id)}><TiCancel size={24}/></button>
+      <button className="btn btn-success p-1" onClick={async () => await this.onEditEndpoint(id)}><AiTwotoneSave size={24} /></button>{' '}
+      <button className="btn btn-danger p-1" onClick={() => this.RemoveFromEditList(id)}><TiCancel size={24} /></button>
     </td>
+  }
+  async searchEndpoint(){
+    const {search} = this.state;
+    const {data} = await api.getFromEndpoint(`${this.props.searchEndpoint}/${search}`);
+    this.setState(data);
   }
   async onRemoveEndpoint(id) {
     const valueIndex = this.state.values.findIndex((value) => value.id === id);
@@ -168,13 +178,28 @@ class EditableTable extends Component {
     values.unshift(obj);
     this.addToEditedIds(0);
   }
+  dynamicSearch(e){
+    this.setState({search:e.target.value});
+    if(e.target.value!==''){
+      this.searchEndpoint(e.target.value);
+    } else {
+      this.fetchFromApi();
+    }
+  }
   render() {
-
+    const {search} = this.state;
     return (
       <div className="container " style={{ overflowY: "hidden", overflowX: "scroll" }}>
+        {this.props.searchEndpoint ? (
+          <div className="col-xs-12">
+            <input name="search" value={search} onChange={this.dynamicSearch} />
+
+          </div>
+        ) : ""
+        }
+
         <div className="container-fluid text-right mt-3 mb-3">
           <button className="btn btn-info pl-3 pr-3 pt-1 pb-1" onClick={() => this.addRow()}><IoIosAddCircleOutline size={24} /> </button>
-
         </div>
         <table className="table mb-0">
           <thead className="bg-light">
