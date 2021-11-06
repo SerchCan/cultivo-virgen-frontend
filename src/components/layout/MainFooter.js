@@ -42,19 +42,7 @@ MainFooter.defaultProps = {
   copyright: "Copyright © 2021 Cultivo virgen",
   menuItems: [
     {
-      title: "Home",
-      to: "#"
-    },
-    {
-      title: "Services",
-      to: "#"
-    },
-    {
-      title: "About",
-      to: "#"
-    },
-    {
-      title: "Blog",
+      title: "",
       to: "#"
     }
   ]
