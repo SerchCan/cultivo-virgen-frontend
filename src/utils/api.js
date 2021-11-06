@@ -1,16 +1,22 @@
 import axios from 'axios';
 
-axios.defaults.baseURL = "http://localhost:4000/";
+axios.defaults.baseURL = "https://api.cultivo-virgen.link/";
+/*axios.defaults.baseURL = "http://localhost:4000/";*/
 
 const api = {
-  getFromEndpoint: async(endpoint) => await axios.get(endpoint),
-  putFromEndpoint: async(endpoint,params={}) => await axios.put(endpoint,params),
-  postFromEndpoint: async(endpoint,params={}) => await axios.post(endpoint,params),
-  deleteFromEndpoint: async(endpoint,params={}) => await axios.delete(endpoint,params),
-  postProduct: async()=> await axios.post('/product'),
-  getProducts: async()=> await axios.get('/product/find'),
+  getFromEndpoint: async (endpoint) => await axios.get(endpoint),
+  putFromEndpoint: async (endpoint, params = {}) => await axios.put(endpoint, params),
+  postFromEndpoint: async (endpoint, params = {}) => await axios.post(endpoint, params),
+  deleteFromEndpoint: async (endpoint, params = {}) => await axios.delete(endpoint, params),
+  postProduct: async () => await axios.post('/product'),
+  getProducts: async () => await axios.get('/product/find'),
+  findProduct: async (params) => await axios.get(`/product/find/${params}`),
 
-  saveLogbook: async(params={})=> await axios.post('/logbook/save',params),
-  getLogbook: async(params={})=> await axios.post('/logbook/get',params),
+  saveLogbook: async (params = {}) => await axios.post('/logbook/save', params),
+  getLogbook: async (params = {}) => await axios.post('/logbook/get', params),
+  getUsersByRole: async (params = {}) => await axios.post('/management/getUsersByRole', params),
+  getUserRole: async (params={}) => await axios.post('/management/getUserRole', params),
+
+  
 }
 export default api;

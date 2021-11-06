@@ -16,8 +16,11 @@ class FeedingOverview extends Component {
     this.state = {
       bitacore: [],
       date: moment(),
-      typesOfAliments : ["1.5", "2.5", "3.5 %25","3.5 %32", "4.5 %32", "5.5"]
-
+      typesOfAliments: ["1.5", "2.5", "3.5 %25", "3.5 %32", "4.5 %32", "5.5"],
+      user: this.props.user,
+      watchingEmployee: this.props.user,
+      canViewOthers: false,
+      employees: []
     };
     this.mapColumns = this.mapColumns.bind(this);
     this.previousMonth = this.previousMonth.bind(this);
@@ -27,8 +30,10 @@ class FeedingOverview extends Component {
     this.fetchLogbook = this.fetchLogbook.bind(this);
     this.save = this.save.bind(this);
     this.updateRowTotals = this.updateRowTotals.bind(this);
+    this.onChangeUser = this.onChangeUser.bind(this);
+    
   }
-  loadDays(){
+  loadDays() {
     const { date } = this.state;
     const nrOfDays = date.daysInMonth()
     let initial = []
@@ -53,18 +58,16 @@ class FeedingOverview extends Component {
     }
     this.setState({ bitacore: initial })
   }
-  async fetchLogbook(){
-    const {date} = this.state;
-    const {user} = this.props;
-    let month = date.format("M") 
+  async fetchLogbook() {
+    const { date, watchingEmployee } = this.state;
+    let month = date.format("M")
     let year = date.format("Y")
-
-    const {data} = await api.getLogbook({
+    const { data } = await api.getLogbook({
       month,
       year,
-      employee: user.email
+      employee: watchingEmployee.email
     })
-    if(!data){
+    if (!data) {
       console.log("loaded manually")
       this.loadDays();
     } else {
@@ -73,74 +76,89 @@ class FeedingOverview extends Component {
     }
   }
   async componentDidMount() {
-   await this.fetchLogbook();
+    const { user } = this.state;
+    const { data: admins } = await api.getUsersByRole({ role: 'Administrator' });
+    const { data: warehouseSupervisors } = await api.getUsersByRole({ role: 'Warehouse' });
+
+    const isAdmin = admins.filter(admin => admin.email === user.email);
+    const isSupervisor = warehouseSupervisors.filter(supervisor => supervisor.email === user.email);
+    if (isAdmin.length > 0 || isSupervisor.length > 0) {
+      const { data: employees } = await api.getUsersByRole();
+      this.setState({ canViewOthers: true, employees })
+    }
+    await this.fetchLogbook();
   }
 
-  async save(){
-    const {date, bitacore} = this.state;
-    const {user} = this.props;
-    let month = date.format("M") 
+  async save() {
+    const { date, bitacore } = this.state;
+    const { watchingEmployee } = this.props;
+    let month = date.format("M")
     let year = date.format("Y")
     await api.saveLogbook({
-      date:`${year}-${month}-01`,
-      employee: user.email,
+      date: `${year}-${month}-01`,
+      employee: watchingEmployee.email,
       logbooks: JSON.stringify(bitacore)
     });
   }
-  loadFromLogbook(logbooks){
+  loadFromLogbook(logbooks) {
     let newLogbook = JSON.parse(logbooks);
-    this.setState({bitacore:newLogbook});
+    this.setState({ bitacore: newLogbook });
   }
   onChangeInput(e, row, column) {
     const { bitacore } = this.state;
     bitacore[row][column] = e.target.value;
     this.setState({ bitacore }, this.updateRowTotals(row))
   }
-  updateRowTotals(row){
+  async  onChangeUser(e){
+    console.log(e.target.value);
+    await this.setState({watchingEmployee: JSON.parse(e.target.value)});
+    await this.fetchLogbook()
+  }
+  updateRowTotals(row) {
     let total = 0;
     const { bitacore } = this.state;
-    const sumColumns = ["07:00","07:30","09:30","11:00","12:00","13:00","15:00","16:30"];
+    const sumColumns = ["07:00", "07:30", "09:30", "11:00", "12:00", "13:00", "15:00", "16:30"];
     sumColumns.forEach(column => {
       total += Number(bitacore[row][column]);
     });
     bitacore[row].totalPerDay = total * Number(bitacore[row].cellNumbers);
-    this.setState({bitacore});
+    this.setState({ bitacore });
   }
-  previousMonth(){
-    const {date} = this.state;
-    date.subtract(1,'month');
-    this.setState({date}, this.fetchLogbook)
+  previousMonth() {
+    const { date } = this.state;
+    date.subtract(1, 'month');
+    this.setState({ date }, this.fetchLogbook)
   }
-  nextMonth(){
-    const {date} = this.state;
-    date.add(1,'month');
-    this.setState({date}, this.fetchLogbook)
+  nextMonth() {
+    const { date } = this.state;
+    date.add(1, 'month');
+    this.setState({ date }, this.fetchLogbook)
   }
   mapColumns() {
-    const { bitacore, typesOfAliments=[] } = this.state;
+    const { bitacore, typesOfAliments = [] } = this.state;
     return (
       bitacore.map((bitacoreRow, index) => (
         <tr key={bitacoreRow.dia}>
           <td>{`${bitacoreRow.dia}`}</td>
-          <td><FormInput style={{minWidth:"4em"}} onChange={e => this.onChangeInput(e, index, "07:00")} value={`${bitacoreRow["07:00"] != 0 ? bitacoreRow["07:00"]:''}`} placeholder={`${bitacoreRow["07:00"]} g`} /></td>
-          <td><FormInput style={{minWidth:"4em"}} onChange={e => this.onChangeInput(e, index, "07:30")} value={`${bitacoreRow["07:30"] != 0 ? bitacoreRow["07:30"]:''}`} placeholder={`${bitacoreRow["07:30"]} g`} /></td>
-          <td><FormInput style={{minWidth:"4em"}} onChange={e => this.onChangeInput(e, index, "09:30")} value={`${bitacoreRow["09:30"] != 0 ? bitacoreRow["09:30"]:''}`} placeholder={`${bitacoreRow["09:30"]} g`} /></td>
-          <td><FormInput style={{minWidth:"4em"}} onChange={e => this.onChangeInput(e, index, "11:00")} value={`${bitacoreRow["11:00"] != 0 ? bitacoreRow["11:00"]:''}`} placeholder={`${bitacoreRow["11:00"]} g`} /></td>
-          <td><FormInput style={{minWidth:"4em"}} onChange={e => this.onChangeInput(e, index, "12:00")} value={`${bitacoreRow["12:00"] != 0 ? bitacoreRow["12:00"]:''}`} placeholder={`${bitacoreRow["12:00"]} g`} /></td>
-          <td><FormInput style={{minWidth:"4em"}} onChange={e => this.onChangeInput(e, index, "13:00")} value={`${bitacoreRow["13:00"] != 0 ? bitacoreRow["13:00"]:''}`} placeholder={`${bitacoreRow["13:00"]} g`} /></td>
-          <td><FormInput style={{minWidth:"4em"}} onChange={e => this.onChangeInput(e, index, "15:00")} value={`${bitacoreRow["15:00"] != 0 ? bitacoreRow["15:00"]:''}`} placeholder={`${bitacoreRow["15:00"]} g`} /></td>
-          <td><FormInput style={{minWidth:"4em"}} onChange={e => this.onChangeInput(e, index, "16:30")} value={`${bitacoreRow["16:30"] != 0 ? bitacoreRow["16:30"]:''}`} placeholder={`${bitacoreRow["16:30"]} g`} /></td>
-          <td><FormInput style={{minWidth:"5em"}} type="number" min="0" onChange={e => this.onChangeInput(e, index, "cellNumbers")} value={`${bitacoreRow.cellNumbers}`} /></td>
+          <td><FormInput style={{minWidth:"4em"}} onChange={e => this.onChangeInput(e, index, "07:00")} value={`${bitacoreRow["07:00"] !== 0 ? bitacoreRow["07:00"] : ''}`} placeholder={`${bitacoreRow["07:00"]} g`} /></td>
+          <td><FormInput style={{minWidth:"4em"}} onChange={e => this.onChangeInput(e, index, "07:30")} value={`${bitacoreRow["07:30"] !== 0 ? bitacoreRow["07:30"] : ''}`} placeholder={`${bitacoreRow["07:30"]} g`} /></td>
+          <td><FormInput style={{minWidth:"4em"}} onChange={e => this.onChangeInput(e, index, "09:30")} value={`${bitacoreRow["09:30"] !== 0 ? bitacoreRow["09:30"] : ''}`} placeholder={`${bitacoreRow["09:30"]} g`} /></td>
+          <td><FormInput style={{minWidth:"4em"}} onChange={e => this.onChangeInput(e, index, "11:00")} value={`${bitacoreRow["11:00"] !== 0 ? bitacoreRow["11:00"] : ''}`} placeholder={`${bitacoreRow["11:00"]} g`} /></td>
+          <td><FormInput style={{minWidth:"4em"}} onChange={e => this.onChangeInput(e, index, "12:00")} value={`${bitacoreRow["12:00"] !== 0 ? bitacoreRow["12:00"] : ''}`} placeholder={`${bitacoreRow["12:00"]} g`} /></td>
+          <td><FormInput style={{minWidth:"4em"}} onChange={e => this.onChangeInput(e, index, "13:00")} value={`${bitacoreRow["13:00"] !== 0 ? bitacoreRow["13:00"] : ''}`} placeholder={`${bitacoreRow["13:00"]} g`} /></td>
+          <td><FormInput style={{minWidth:"4em"}} onChange={e => this.onChangeInput(e, index, "15:00")} value={`${bitacoreRow["15:00"] !== 0 ? bitacoreRow["15:00"] : ''}`} placeholder={`${bitacoreRow["15:00"]} g`} /></td>
+          <td><FormInput style={{minWidth:"4em"}} onChange={e => this.onChangeInput(e, index, "16:30")} value={`${bitacoreRow["16:30"] !== 0 ? bitacoreRow["16:30"] : ''}`} placeholder={`${bitacoreRow["16:30"]} g`} /></td>
+          <td><FormInput style={{minWidth:"4em"}} type="number" min="0" onChange={e => this.onChangeInput(e, index, "cellNumbers")} value={`${bitacoreRow.cellNumbers}`} /></td>
           <td><FormInput style={{minWidth:"4em"}} onChange={e => this.onChangeInput(e, index, "totalPerDay")} value={`${bitacoreRow.totalPerDay}`} disabled /></td>
           <td>
             <FormSelect
-              style={{minWidth:"100px"}}
+              style={{ minWidth: "100px" }}
               value={`${bitacoreRow.numberOfAliment}`}
               onChange={e => this.onChangeInput(e, index, "numberOfAliment")}
             >
-              { typesOfAliments.map(alimentType=> <option key={alimentType} value={alimentType}>{alimentType}</option>) }
+              {typesOfAliments.map(alimentType => <option key={alimentType} value={alimentType}>{alimentType}</option>)}
             </FormSelect>
-            </td>
+          </td>
           <td><FormInput onChange={e => this.onChangeInput(e, index, "medication")} value={`${bitacoreRow.medication}`} /></td>
           <td><FormInput type="number" onChange={e => this.onChangeInput(e, index, "mortality")} value={`${bitacoreRow.mortality}`} /></td>
           <td><FormInput onChange={e => this.onChangeInput(e, index, "observations")} value={`${bitacoreRow.observations}`} /></td>
@@ -149,7 +167,7 @@ class FeedingOverview extends Component {
     )
   }
   render() {
-    const {date} = this.state;
+    const { date, user, canViewOthers, employees } = this.state;
     return (
       <div>
         <Container fluid className="main-content-container px-4">
@@ -164,17 +182,27 @@ class FeedingOverview extends Component {
 
           <Row>
 
-         <div class="col-md-12 col-centered " style={{display: 'flex', justifyContent: 'center'}}>
-            <button class="btn btn-primary mr-4 mb-2"  onClick={this.previousMonth}>Anterior</button>
-            {' '}
-            <span className="pt-1">{date.format('MMM-Y')}</span>
-            {' '}
-            <button class="btn btn-primary ml-4 mb-2" onClick={this.nextMonth}>Siguiente</button>
+            <div className="col-md-12 col-centered " style={{ display: 'flex', justifyContent: 'center' }}>
+              <button className="btn btn-primary mr-4 mb-2" onClick={this.previousMonth}>Anterior</button>
+              {' '}
+              <span className="pt-1">{date.format('MMM-Y')}</span>
+              {' '}
+              <button className="btn btn-primary ml-4 mb-2" onClick={this.nextMonth}>Siguiente</button>
 
-            <button class="btn btn-success ml-4 mb-2"  onClick={this.save}>Guardar</button>
-
-          </div>
-
+              <button className="btn btn-success ml-4 mb-2" onClick={this.save}>Guardar</button>
+              
+            </div>
+            
+            <div className="ml-3 mb-2">
+              {canViewOthers ? (
+                <FormSelect
+                  onChange={this.onChangeUser}
+                >
+                  <option value={JSON.stringify(user)}>{user.name}</option>
+                  {employees.map(employee => <option key={employee.email} value={JSON.stringify(employee)}>{employee.name}</option>)}
+                </FormSelect>
+              ) : null}
+            </div>
             <Col className="mb-4">
               <Card small style={{ overflowX: "scroll" }}>
                 <table className="table">

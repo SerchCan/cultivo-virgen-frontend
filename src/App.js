@@ -26,7 +26,7 @@ export default () => {
             exact={route.exact}
             component={withTracker(props => {
               console.log({isAuthenticated, user});
-              if(!isAuthenticated && route.path != "/login"){
+              if(!isAuthenticated && route.path !== "/login"){
                 return (<Redirect to="/login" />)
               } 
               return (

@@ -5,7 +5,6 @@ import { Container, Row, Col } from "shards-react";
 import PageTitle from "./../components/common/PageTitle";
 import SmallStats from "./../components/common/SmallStats";
 import UsersOverview from "./../components/blog/UsersOverview";
-import TopReferrals from "./../components/common/TopReferrals";
 
 const BlogOverview = ({ smallStats }) => (
   <Container fluid className="main-content-container px-4">
