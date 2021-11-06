@@ -140,16 +140,16 @@ class FeedingOverview extends Component {
       bitacore.map((bitacoreRow, index) => (
         <tr key={bitacoreRow.dia}>
           <td>{`${bitacoreRow.dia}`}</td>
-          <td><FormInput onChange={e => this.onChangeInput(e, index, "07:00")} value={`${bitacoreRow["07:00"] !== 0 ? bitacoreRow["07:00"] : ''}`} placeholder={`${bitacoreRow["07:00"]} g`} /></td>
-          <td><FormInput onChange={e => this.onChangeInput(e, index, "07:30")} value={`${bitacoreRow["07:30"] !== 0 ? bitacoreRow["07:30"] : ''}`} placeholder={`${bitacoreRow["07:30"]} g`} /></td>
-          <td><FormInput onChange={e => this.onChangeInput(e, index, "09:30")} value={`${bitacoreRow["09:30"] !== 0 ? bitacoreRow["09:30"] : ''}`} placeholder={`${bitacoreRow["09:30"]} g`} /></td>
-          <td><FormInput onChange={e => this.onChangeInput(e, index, "11:00")} value={`${bitacoreRow["11:00"] !== 0 ? bitacoreRow["11:00"] : ''}`} placeholder={`${bitacoreRow["11:00"]} g`} /></td>
-          <td><FormInput onChange={e => this.onChangeInput(e, index, "12:00")} value={`${bitacoreRow["12:00"] !== 0 ? bitacoreRow["12:00"] : ''}`} placeholder={`${bitacoreRow["12:00"]} g`} /></td>
-          <td><FormInput onChange={e => this.onChangeInput(e, index, "13:00")} value={`${bitacoreRow["13:00"] !== 0 ? bitacoreRow["13:00"] : ''}`} placeholder={`${bitacoreRow["13:00"]} g`} /></td>
-          <td><FormInput onChange={e => this.onChangeInput(e, index, "15:00")} value={`${bitacoreRow["15:00"] !== 0 ? bitacoreRow["15:00"] : ''}`} placeholder={`${bitacoreRow["15:00"]} g`} /></td>
-          <td><FormInput onChange={e => this.onChangeInput(e, index, "16:30")} value={`${bitacoreRow["16:30"] !== 0 ? bitacoreRow["16:30"] : ''}`} placeholder={`${bitacoreRow["16:30"]} g`} /></td>
-          <td><FormInput type="number" min="0" onChange={e => this.onChangeInput(e, index, "cellNumbers")} value={`${bitacoreRow.cellNumbers}`} /></td>
-          <td><FormInput onChange={e => this.onChangeInput(e, index, "totalPerDay")} value={`${bitacoreRow.totalPerDay}`} disabled /></td>
+          <td><FormInput style={{minWidth:"4em"}} onChange={e => this.onChangeInput(e, index, "07:00")} value={`${bitacoreRow["07:00"] !== 0 ? bitacoreRow["07:00"] : ''}`} placeholder={`${bitacoreRow["07:00"]} g`} /></td>
+          <td><FormInput style={{minWidth:"4em"}} onChange={e => this.onChangeInput(e, index, "07:30")} value={`${bitacoreRow["07:30"] !== 0 ? bitacoreRow["07:30"] : ''}`} placeholder={`${bitacoreRow["07:30"]} g`} /></td>
+          <td><FormInput style={{minWidth:"4em"}} onChange={e => this.onChangeInput(e, index, "09:30")} value={`${bitacoreRow["09:30"] !== 0 ? bitacoreRow["09:30"] : ''}`} placeholder={`${bitacoreRow["09:30"]} g`} /></td>
+          <td><FormInput style={{minWidth:"4em"}} onChange={e => this.onChangeInput(e, index, "11:00")} value={`${bitacoreRow["11:00"] !== 0 ? bitacoreRow["11:00"] : ''}`} placeholder={`${bitacoreRow["11:00"]} g`} /></td>
+          <td><FormInput style={{minWidth:"4em"}} onChange={e => this.onChangeInput(e, index, "12:00")} value={`${bitacoreRow["12:00"] !== 0 ? bitacoreRow["12:00"] : ''}`} placeholder={`${bitacoreRow["12:00"]} g`} /></td>
+          <td><FormInput style={{minWidth:"4em"}} onChange={e => this.onChangeInput(e, index, "13:00")} value={`${bitacoreRow["13:00"] !== 0 ? bitacoreRow["13:00"] : ''}`} placeholder={`${bitacoreRow["13:00"]} g`} /></td>
+          <td><FormInput style={{minWidth:"4em"}} onChange={e => this.onChangeInput(e, index, "15:00")} value={`${bitacoreRow["15:00"] !== 0 ? bitacoreRow["15:00"] : ''}`} placeholder={`${bitacoreRow["15:00"]} g`} /></td>
+          <td><FormInput style={{minWidth:"4em"}} onChange={e => this.onChangeInput(e, index, "16:30")} value={`${bitacoreRow["16:30"] !== 0 ? bitacoreRow["16:30"] : ''}`} placeholder={`${bitacoreRow["16:30"]} g`} /></td>
+          <td><FormInput style={{minWidth:"4em"}} type="number" min="0" onChange={e => this.onChangeInput(e, index, "cellNumbers")} value={`${bitacoreRow.cellNumbers}`} /></td>
+          <td><FormInput style={{minWidth:"4em"}} onChange={e => this.onChangeInput(e, index, "totalPerDay")} value={`${bitacoreRow.totalPerDay}`} disabled /></td>
           <td>
             <FormSelect
               style={{ minWidth: "100px" }}
@@ -160,7 +160,7 @@ class FeedingOverview extends Component {
             </FormSelect>
           </td>
           <td><FormInput onChange={e => this.onChangeInput(e, index, "medication")} value={`${bitacoreRow.medication}`} /></td>
-          <td><FormInput onChange={e => this.onChangeInput(e, index, "mortality")} value={`${bitacoreRow.mortality}`} /></td>
+          <td><FormInput type="number" onChange={e => this.onChangeInput(e, index, "mortality")} value={`${bitacoreRow.mortality}`} /></td>
           <td><FormInput onChange={e => this.onChangeInput(e, index, "observations")} value={`${bitacoreRow.observations}`} /></td>
         </tr>
       ))
