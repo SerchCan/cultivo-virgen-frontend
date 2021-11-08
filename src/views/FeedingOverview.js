@@ -90,8 +90,7 @@ class FeedingOverview extends Component {
   }
 
   async save() {
-    const { date, bitacore } = this.state;
-    const { watchingEmployee } = this.props;
+    const { date, bitacore, watchingEmployee} = this.state;
     let month = date.format("M")
     let year = date.format("Y")
     await api.saveLogbook({
