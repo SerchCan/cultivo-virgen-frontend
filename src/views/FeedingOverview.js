@@ -191,8 +191,6 @@ class FeedingOverview extends Component {
                 <button className="btn btn-primary ml-4 mb-2" onClick={this.nextMonth}>Siguiente</button>              
               </div>
               <div className="col-centered" style={{ display: 'flex', justifyContent: 'center' }}></div>
-              <button className="btn btn-primary ml-4 mb-2" onClick={this.nextMonth}>Siguiente</button>
-
               <button className="btn btn-success ml-4 mb-2" onClick={this.save}>Guardar</button>
               
             </div>
