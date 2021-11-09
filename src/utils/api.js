@@ -13,8 +13,8 @@ const api = {
   deleteFromEndpoint: async (endpoint, params = {}) => await axios.delete(endpoint, params),
   postProduct: async () => await axios.post('/product'),
   getProducts: async () => await axios.get('/product/find'),
+  getProductsByCategory: async (category) => await axios.get(`/product/findByCategory/${category}`),
   findProduct: async (params) => await axios.get(`/product/find/${params}`),
-
   saveLogbook: async (params = {}) => await axios.post('/logbook/save', params),
   getLogbook: async (params = {}) => await axios.post('/logbook/get', params),
   getUsersByRole: async (params = {}) => await axios.post('/management/getUsersByRole', params),

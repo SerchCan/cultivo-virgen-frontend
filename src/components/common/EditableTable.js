@@ -4,7 +4,7 @@ import { AiOutlineEdit, AiTwotoneSave } from 'react-icons/ai';
 import { FiTrash } from 'react-icons/fi';
 import { TiCancel } from 'react-icons/ti';
 import { IoIosAddCircleOutline } from 'react-icons/io';
-
+import { FormInput, FormSelect } from "shards-react";
 class EditableTable extends Component {
   // endpoints 
   // fetchEndpoint
@@ -98,10 +98,35 @@ class EditableTable extends Component {
         {
           columns.map(column => column === 'id' ?
             <td key={column}> {value[column]}</td>
-            : <td key={column}>
+            : column === 'categoria' ? <td key={column}>
+            <FormSelect
+              value={value[column]}
+              size={"10"}
+              onChange={e => this.onChangeEditingField(e, value.id, column)}
+            >
+              <option ></option>
+              <option value="alimento">Alimento</option>
+              <option value="medicina">Medicina</option>
+              <option value="tilapia">Tilapia</option>
+            </FormSelect>
+          </td> : column === 'unidad' ? <td key={column}>
+            <FormSelect
+              value={value[column]}
+              size={"10"}
+              onChange={e => this.onChangeEditingField(e, value.id, column)}
+            >
+              <option></option>
+              <option value="ml">Mililitros</option>
+              <option value="lt">Litro</option>
+              <option value="g">Gramos</option>
+              <option value="kg">Kilogramo</option>
+            </FormSelect>
+          </td> : 
+          
+              <td key={column}>
               <input
                 value={value[column]}
-                size={10}
+                size={"10"}
                 onChange={e => this.onChangeEditingField(e, value.id, column)}
               />
             </td>)

@@ -17,6 +17,7 @@ class FeedingOverview extends Component {
     this.state = {
       bitacore: [],
       date: moment(),
+      typesOfMedicines: [],
       typesOfAliments: ["1.5", "2.5", "3.5 %25", "3.5 %32", "4.5 %32", "5.5"],
       user: this.props.user,
       watchingEmployee: this.props.user,
@@ -80,12 +81,24 @@ class FeedingOverview extends Component {
     const { user } = this.state;
     const { data: admins } = await api.getUsersByRole({ role: 'Administrator' });
     const { data: warehouseSupervisors } = await api.getUsersByRole({ role: 'Warehouse' });
-
+    const { data: typesOfAlimentsRaw } = await api.getProductsByCategory('alimento');
+    const { data: typesOfMedicinesRaw} = await api.getProductsByCategory('medicina');
+    const {values:typesOfAliments} = typesOfAlimentsRaw
+    const {values:typesOfMedicines} = typesOfMedicinesRaw
+    console.log({
+      typesOfAliments,
+      typesOfMedicines,
+    })
     const isAdmin = admins.filter(admin => admin.email === user.email);
     const isSupervisor = warehouseSupervisors.filter(supervisor => supervisor.email === user.email);
     if (isAdmin.length > 0 || isSupervisor.length > 0) {
       const { data: employees } = await api.getUsersByRole();
-      this.setState({ canViewOthers: true, employees })
+      this.setState({ 
+        canViewOthers: true, 
+        employees, 
+        typesOfAliments,
+        typesOfMedicines 
+      });
     }
     await this.fetchLogbook();
   }
@@ -135,7 +148,7 @@ class FeedingOverview extends Component {
     this.setState({ date }, this.fetchLogbook)
   }
   mapColumns() {
-    const { bitacore, typesOfAliments = [] } = this.state;
+    const { bitacore, typesOfAliments = [], typesOfMedicines = [] } = this.state;
     return (
       bitacore.map((bitacoreRow, index) => (
         <tr key={bitacoreRow.dia}>
@@ -156,10 +169,20 @@ class FeedingOverview extends Component {
               value={`${bitacoreRow.numberOfAliment}`}
               onChange={e => this.onChangeInput(e, index, "numberOfAliment")}
             >
-              {typesOfAliments.map(alimentType => <option key={alimentType} value={alimentType}>{alimentType}</option>)}
+              <option></option>
+              {typesOfAliments.map(alimentType => <option key={alimentType.id} value={alimentType.id}>{alimentType.nombre}</option>)}
             </FormSelect>
           </td>
-          <td><FormInput onChange={e => this.onChangeInput(e, index, "medication")} value={`${bitacoreRow.medication}`} /></td>
+          <td>
+            <FormSelect
+              style={{ minWidth: "100px" }}
+              value={`${bitacoreRow.medication}`}
+              onChange={e => this.onChangeInput(e, index, "medication")}
+            >
+              <option></option>
+              {typesOfMedicines.map(medicine => <option key={medicine.id} value={medicine.id}>{medicine.nombre}</option>)}
+            </FormSelect>
+          </td>
           <td><FormInput type="number" onChange={e => this.onChangeInput(e, index, "mortality")} value={`${bitacoreRow.mortality}`} /></td>
           <td><FormInput onChange={e => this.onChangeInput(e, index, "observations")} value={`${bitacoreRow.observations}`} /></td>
         </tr>
