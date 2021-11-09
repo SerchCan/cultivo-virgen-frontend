@@ -4,7 +4,7 @@ import { AiOutlineEdit, AiTwotoneSave } from 'react-icons/ai';
 import { FiTrash } from 'react-icons/fi';
 import { TiCancel } from 'react-icons/ti';
 import { IoIosAddCircleOutline } from 'react-icons/io';
-import { FormInput, FormSelect } from "shards-react";
+import { FormSelect } from "shards-react";
 class EditableTable extends Component {
   // endpoints 
   // fetchEndpoint
