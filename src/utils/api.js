@@ -1,10 +1,7 @@
 import axios from 'axios';
 
-const apis = {
-  production: 'https://api.cultivo-virgen.link/',
-  development: 'http://localhost:4000/'
-}
-axios.defaults.baseURL = apis[process.env.NODE_ENV];
+axios.defaults.baseURL = "https://api.cultivo-virgen.link/";
+/*axios.defaults.baseURL = "http://localhost:4000/";*/
 
 const api = {
   getFromEndpoint: async (endpoint) => await axios.get(endpoint),
