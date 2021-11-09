@@ -181,18 +181,17 @@ class FeedingOverview extends Component {
 
           <Row>
 
-            <div className="col-md-12 col-centered" style={{ display: 'flex', justifyContent: 'center', flexWrap: "wrap", }}>
-              <div className="col-centered" style={{ display: 'flex', justifyContent: 'center' }}>
-                <button className="btn btn-primary mr-4 mb-2" onClick={this.previousMonth}>Anterior</button>
-                {' '}
-                <span className="pt-1">{date.format('MMM-Y')}</span>
-                {' '}
-                <button className="btn btn-primary ml-4 mb-2" onClick={this.nextMonth}>Siguiente</button>              
-              </div>
-              <div className="col-centered" style={{ display: 'flex', justifyContent: 'center' }}>
-                <button className="btn btn-success ml-2 mb-2" onClick={this.save}>Guardar</button>
-              </div>            
+            <div className="col-md-12 col-centered " style={{ display: 'flex', justifyContent: 'center' }}>
+              <button className="btn btn-primary mr-4 mb-2" onClick={this.previousMonth}>Anterior</button>
+              {' '}
+              <span className="pt-1">{date.format('MMM-Y')}</span>
+              {' '}
+              <button className="btn btn-primary ml-4 mb-2" onClick={this.nextMonth}>Siguiente</button>
+
+              <button className="btn btn-success ml-4 mb-2" onClick={this.save}>Guardar</button>
+              
             </div>
+            
             <div className="ml-3 mb-2">
               {canViewOthers ? (
                 <FormSelect
