@@ -10,6 +10,7 @@ import {
 import PageTitle from "../components/common/PageTitle";
 import moment from 'moment'
 import api from '../utils/api'
+import '../assets/feedingOverview.css'
 class FeedingOverview extends Component {
   constructor(props) {
     super(props);
@@ -186,24 +187,24 @@ class FeedingOverview extends Component {
               <div className="col-centered" style={{ display: 'flex', justifyContent: 'center' }}>
                 <button className="btn btn-primary mr-4 mb-2" onClick={this.previousMonth}>Anterior</button>
                 {' '}
-                <span className="pt-1">{date.format('MMM-Y')}</span>
+                <span className="pt-1" style={{ whiteSpace: 'nowrap', }} >{date.format('MMM-Y')}</span>
                 {' '}
                 <button className="btn btn-primary ml-4 mb-2" onClick={this.nextMonth}>Siguiente</button>              
               </div>
-              <div className="col-centered" style={{ display: 'flex', justifyContent: 'center' }}></div>
-              <button className="btn btn-success ml-4 mb-2" onClick={this.save}>Guardar</button>
-              
+              <div className="col-centered" style={{ display: 'flex', justifyContent: 'center', }}></div>
+              <button className="btn btn-success ml-4 mr-4 mb-2" onClick={this.save}>Guardar</button>            
             </div>
-            
-            <div className="ml-3 mb-2">
-              {canViewOthers ? (
-                <FormSelect
+            <div className="col-md-12 ml-3 mr-3 mb-2 col-centered user-selector">
+              <div style={{ display: 'inline-flex', justifyContent: 'space-evenly', }}>
+                {canViewOthers ? (
+                  <FormSelect
                   onChange={this.onChangeUser}
-                >
-                  <option value={JSON.stringify(user)}>{user.name}</option>
-                  {employees.map(employee => <option key={employee.email} value={JSON.stringify(employee)}>{employee.name}</option>)}
-                </FormSelect>
-              ) : null}
+                  >
+                    <option value={JSON.stringify(user)}>{user.name}</option>
+                    {employees.map(employee => <option key={employee.email} value={JSON.stringify(employee)}>{employee.name}</option>)}
+                  </FormSelect>
+                ) : null}
+              </div>
             </div>
             <Col className="mb-4">
               <Card small style={{ overflowX: "scroll" }}>

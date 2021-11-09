@@ -1,0 +1,10 @@
+.user-selector{
+  display: flex;
+  justify-content: center;
+}
+@media screen and (min-width: 600px){
+  .user-selector{
+    justify-content: start;
+    padding-left: 0!important;
+  }
+}
