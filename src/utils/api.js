@@ -19,6 +19,9 @@ const api = {
   getLogbook: async (params = {}) => await axios.post('/logbook/get', params),
   getUsersByRole: async (params = {}) => await axios.post('/management/getUsersByRole', params),
   getUserRole: async (params={}) => await axios.post('/management/getUserRole', params),
+  exportLogbook: async (params={}) => await axios.post('/logbook/export', params,{
+    responseType: 'arraybuffer',
+  }),
 
   
 }

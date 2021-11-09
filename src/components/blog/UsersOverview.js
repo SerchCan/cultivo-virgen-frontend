@@ -1,14 +1,25 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { Row, Col, Card, CardHeader, CardBody, Button } from "shards-react";
-
-import RangeDatePicker from "../common/RangeDatePicker";
+import classNames from "classnames";
+import {
+  Row, Col, Card,
+  CardHeader, CardBody, Button,
+  InputGroup, DatePicker, InputGroupAddon, InputGroupText
+} from "shards-react";
+import moment from 'moment';
+import FileDownload from 'js-file-download'
 import Chart from "../../utils/chart";
-
+import api from '../../utils/api';
+import "../../assets/range-date-picker.css";
 class UsersOverview extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {
+      startDate: undefined,
+    };
 
+    this.handleStartDateChange = this.handleStartDateChange.bind(this);
+    this.generateReport = this.generateReport.bind(this);
     this.canvasRef = React.createRef();
   }
 
@@ -84,9 +95,28 @@ class UsersOverview extends React.Component {
     // Render the chart.
     BlogUsersOverview.render();
   }
+  handleStartDateChange(value) {
+    this.setState({
+      ...this.state,
+      ...{ startDate: moment(value).startOf('month').toDate() }
+    });
+  }
+  async generateReport(){
+    const {startDate} = this.state;
+    const month = moment(startDate).format('M');
+    const year = moment(startDate).format('Y');
+    const {data} = await api.exportLogbook({
+      month,
+      year,
+      employee: '150300087@ucaribe.edu.mx'
+    })
+    FileDownload(data, `${year}-${month}-bitacora.xlsx`);
 
+  }
   render() {
     const { title } = this.props;
+    const { className } = this.props;
+    const classes = classNames(className, "d-flex", "my-auto", "date-range");
     return (
       <Card small className="h-100">
         <CardHeader className="border-bottom">
@@ -95,10 +125,25 @@ class UsersOverview extends React.Component {
         <CardBody className="pt-0">
           <Row className="border-bottom py-2 bg-light">
             <Col sm="6" className="d-flex mb-2 mb-sm-0">
-              <RangeDatePicker />
+              <InputGroup className={classes}>
+                <DatePicker
+                  size="sm"
+                  selected={this.state.startDate}
+                  onChange={this.handleStartDateChange}
+                  placeholderText="Select month"
+                  dropdownMode="select"
+                  className="text-center"
+                />
+                <InputGroupAddon type="append">
+                  <InputGroupText>
+                    <i className="material-icons">&#xE916;</i>
+                  </InputGroupText>
+                </InputGroupAddon>
+              </InputGroup>
             </Col>
             <Col>
               <Button
+                onClick={()=>this.generateReport()}
                 size="sm"
                 className="d-flex btn-white ml-auto mr-auto ml-sm-auto mr-sm-0 mt-3 mt-sm-0"
               >
