@@ -6,7 +6,7 @@ import PageTitle from "./../components/common/PageTitle";
 import SmallStats from "./../components/common/SmallStats";
 import UsersOverview from "./../components/blog/UsersOverview";
 
-const BlogOverview = ({ smallStats }) => (
+const BlogOverview = ({ smallStats,user }) => (
   <Container fluid className="main-content-container px-4">
     {/* Page Header */}
     <Row noGutters className="page-header py-4">
@@ -34,7 +34,7 @@ const BlogOverview = ({ smallStats }) => (
 
     <Row>
       <Col lg="12" md="8" sm="8" className="mb-4">
-        <UsersOverview />
+        <UsersOverview user={user} />
       </Col>
 
 

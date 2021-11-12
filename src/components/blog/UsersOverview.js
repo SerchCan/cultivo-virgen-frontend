@@ -4,7 +4,8 @@ import classNames from "classnames";
 import {
   Row, Col, Card,
   CardHeader, CardBody, Button,
-  InputGroup, DatePicker, InputGroupAddon, InputGroupText
+  InputGroup, DatePicker, InputGroupAddon, InputGroupText,
+  FormSelect,
 } from "shards-react";
 import moment from 'moment';
 import FileDownload from 'js-file-download'
@@ -16,14 +17,21 @@ class UsersOverview extends React.Component {
     super(props);
     this.state = {
       startDate: undefined,
+      user: this.props.user,
+      watchingEmployee: this.props.user,
+      employees: [],
+      canViewOthers: false
+
     };
 
     this.handleStartDateChange = this.handleStartDateChange.bind(this);
     this.generateReport = this.generateReport.bind(this);
+    this.checkPermissions = this.checkPermissions.bind(this);
+    this.onChangeUser = this.onChangeUser.bind(this);
     this.canvasRef = React.createRef();
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     const chartOptions = {
       ...{
         responsive: true,
@@ -91,9 +99,25 @@ class UsersOverview extends React.Component {
     buoMeta.data[
       this.props.chartData.datasets[0].data.length - 1
     ]._model.radius = 0;
-
+    await this.checkPermissions();
     // Render the chart.
     BlogUsersOverview.render();
+  }
+  async checkPermissions(){
+    const { user } = this.state;
+    const { data: admins } = await api.getUsersByRole({ role: 'Administrator' });
+    const { data: warehouseSupervisors } = await api.getUsersByRole({ role: 'Warehouse' });
+    const isAdmin = admins.filter(admin => admin.email === user.email);
+    const isSupervisor = warehouseSupervisors.filter(supervisor => supervisor.email === user.email);
+    if (isAdmin.length > 0 || isSupervisor.length > 0) {
+      const { data: employeesUnfiltered } = await api.getUsersByRole();
+      // remove myself from employees
+      const employees = employeesUnfiltered.filter(employee => employee.email !== user.email);
+      this.setState({ 
+        canViewOthers: true, 
+        employees, 
+      });
+    }
   }
   handleStartDateChange(value) {
     this.setState({
@@ -102,20 +126,31 @@ class UsersOverview extends React.Component {
     });
   }
   async generateReport(){
-    const {startDate} = this.state;
-    const month = moment(startDate).format('M');
-    const year = moment(startDate).format('Y');
-    const {data} = await api.exportLogbook({
-      month,
-      year,
-      employee: '150300087@ucaribe.edu.mx'
-    })
-    FileDownload(data, `${year}-${month}-bitacora.xlsx`);
+    const {startDate, watchingEmployee } = this.state;
+    try{
+      const month = moment(startDate).format('M');
+      const year = moment(startDate).format('Y');
+      const {data} = await api.exportLogbook({
+        month,
+        year,
+        employee: watchingEmployee.email
+      })
+      FileDownload(data, `${year}-${month}-bitacora.xlsx`);
+    } catch (error){
+      if(error.response){
+        if(error.response.statusText === "Not Found"){
+          alert("Sin registro de la bitacora de usuario en el periodo: "+moment(startDate).format('Y MMM'));
+        }
+      }
+    }
 
   }
+  async  onChangeUser(e){
+    await this.setState({watchingEmployee: JSON.parse(e.target.value)});
+  }
   render() {
-    const { title } = this.props;
-    const { className } = this.props;
+    const { title, className, user} = this.props;
+    const {canViewOthers, employees} = this.state;
     const classes = classNames(className, "d-flex", "my-auto", "date-range");
     return (
       <Card small className="h-100">
@@ -140,6 +175,14 @@ class UsersOverview extends React.Component {
                   </InputGroupText>
                 </InputGroupAddon>
               </InputGroup>
+              {canViewOthers ? (
+                  <FormSelect
+                  onChange={this.onChangeUser}
+                  >
+                    <option value={JSON.stringify(user)}>{user.name}</option>
+                    {employees.map(employee => <option key={employee.email} value={JSON.stringify(employee)}>{employee.name}</option>)}
+                  </FormSelect>
+                ) : null}
             </Col>
             <Col>
               <Button

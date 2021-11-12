@@ -92,7 +92,9 @@ class FeedingOverview extends Component {
     const isAdmin = admins.filter(admin => admin.email === user.email);
     const isSupervisor = warehouseSupervisors.filter(supervisor => supervisor.email === user.email);
     if (isAdmin.length > 0 || isSupervisor.length > 0) {
-      const { data: employees } = await api.getUsersByRole();
+      const { data: employeesUnfiltered } = await api.getUsersByRole();
+      // remove myself from employees
+      const employees = employeesUnfiltered.filter(employee => employee.email !== user.email);
       this.setState({ 
         canViewOthers: true, 
         employees, 
