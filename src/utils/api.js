@@ -17,6 +17,7 @@ const api = {
   findProduct: async (params) => await axios.get(`/product/find/${params}`),
   saveLogbook: async (params = {}) => await axios.post('/logbook/save', params),
   getLogbook: async (params = {}) => await axios.post('/logbook/get', params),
+  getLogbookSowings: async (params = {}) => await axios.post('/logbookSowings/get', params),
   getUsersByRole: async (params = {}) => await axios.post('/management/getUsersByRole', params),
   getUserRole: async (params={}) => await axios.post('/management/getUserRole', params),
   exportLogbook: async (params={}) => await axios.post('/logbook/export', params,{

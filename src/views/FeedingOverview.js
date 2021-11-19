@@ -7,6 +7,7 @@ import {
   FormInput,
   FormSelect,
 } from "shards-react";
+import AddSowingModal from '../components/components-overview/Modal';
 import PageTitle from "../components/common/PageTitle";
 import moment from 'moment'
 import api from '../utils/api'
@@ -18,11 +19,13 @@ class FeedingOverview extends Component {
       bitacore: [],
       date: moment(),
       typesOfMedicines: [],
-      typesOfAliments: ["1.5", "2.5", "3.5 %25", "3.5 %32", "4.5 %32", "5.5"],
+      typesOfAliments: [],
       user: this.props.user,
       watchingEmployee: this.props.user,
       canViewOthers: false,
-      employees: []
+      employees: [],
+      sowings: [],
+      sowing: null
     };
     this.mapColumns = this.mapColumns.bind(this);
     this.previousMonth = this.previousMonth.bind(this);
@@ -33,7 +36,11 @@ class FeedingOverview extends Component {
     this.save = this.save.bind(this);
     this.updateRowTotals = this.updateRowTotals.bind(this);
     this.onChangeUser = this.onChangeUser.bind(this);
-    
+    this.onChangeSowing = this.onChangeSowing.bind(this);
+    this.addSowing = this.addSowing.bind(this)
+  }
+  addSowing(sowingName){
+    this.setState({sowing:sowingName},()=>this.fetchLogbook(true));
   }
   loadDays() {
     const { date } = this.state;
@@ -60,15 +67,25 @@ class FeedingOverview extends Component {
     }
     this.setState({ bitacore: initial })
   }
-  async fetchLogbook() {
-    const { date, watchingEmployee } = this.state;
+  async fetchLogbook(manualSowing=false) {
+    const { date, watchingEmployee, sowing } = this.state;
     let month = date.format("M")
     let year = date.format("Y")
     const { data } = await api.getLogbook({
       month,
       year,
-      employee: watchingEmployee.email
+      employee: watchingEmployee.email,
+      sowing: sowing === "" ? null : sowing
     })
+    let { data: sowings } = await api.getLogbookSowings({
+      month,
+      year,
+      employee: watchingEmployee.email,
+    })
+    if(manualSowing){
+      sowings.push({sowing:sowing});
+    }
+    this.setState({ sowings, sowing })
     if (!data) {
       console.log("loaded manually")
       this.loadDays();
@@ -82,38 +99,36 @@ class FeedingOverview extends Component {
     const { data: admins } = await api.getUsersByRole({ role: 'Administrator' });
     const { data: warehouseSupervisors } = await api.getUsersByRole({ role: 'Warehouse' });
     const { data: typesOfAlimentsRaw } = await api.getProductsByCategory('alimento');
-    const { data: typesOfMedicinesRaw} = await api.getProductsByCategory('medicina');
-    const {values:typesOfAliments} = typesOfAlimentsRaw
-    const {values:typesOfMedicines} = typesOfMedicinesRaw
-    console.log({
-      typesOfAliments,
-      typesOfMedicines,
-    })
+    const { data: typesOfMedicinesRaw } = await api.getProductsByCategory('medicina');
+    const { values: typesOfAliments } = typesOfAlimentsRaw
+    const { values: typesOfMedicines } = typesOfMedicinesRaw
     const isAdmin = admins.filter(admin => admin.email === user.email);
     const isSupervisor = warehouseSupervisors.filter(supervisor => supervisor.email === user.email);
     if (isAdmin.length > 0 || isSupervisor.length > 0) {
       const { data: employeesUnfiltered } = await api.getUsersByRole();
       // remove myself from employees
       const employees = employeesUnfiltered.filter(employee => employee.email !== user.email);
-      this.setState({ 
-        canViewOthers: true, 
-        employees, 
+      this.setState({
+        canViewOthers: true,
+        employees,
         typesOfAliments,
-        typesOfMedicines 
+        typesOfMedicines
       });
     }
     await this.fetchLogbook();
   }
 
   async save() {
-    const { date, bitacore, watchingEmployee} = this.state;
+    const { date, bitacore, watchingEmployee, sowing } = this.state;
     let month = date.format("M")
     let year = date.format("Y")
     await api.saveLogbook({
       date: `${year}-${month}-01`,
       employee: watchingEmployee.email,
-      logbooks: JSON.stringify(bitacore)
+      logbooks: JSON.stringify(bitacore),
+      sowing: sowing === "" ? null : sowing
     });
+    alert("Guardado correctamente");
   }
   loadFromLogbook(logbooks) {
     let newLogbook = JSON.parse(logbooks);
@@ -124,9 +139,9 @@ class FeedingOverview extends Component {
     bitacore[row][column] = e.target.value;
     this.setState({ bitacore }, this.updateRowTotals(row))
   }
-  async  onChangeUser(e){
+  async onChangeUser(e) {
     console.log(e.target.value);
-    await this.setState({watchingEmployee: JSON.parse(e.target.value)});
+    await this.setState({ watchingEmployee: JSON.parse(e.target.value) });
     await this.fetchLogbook()
   }
   updateRowTotals(row) {
@@ -142,12 +157,12 @@ class FeedingOverview extends Component {
   previousMonth() {
     const { date } = this.state;
     date.subtract(1, 'month');
-    this.setState({ date }, this.fetchLogbook)
+    this.setState({ date, sowing: null }, this.fetchLogbook)
   }
   nextMonth() {
     const { date } = this.state;
     date.add(1, 'month');
-    this.setState({ date }, this.fetchLogbook)
+    this.setState({ date, sowing: null }, this.fetchLogbook)
   }
   mapColumns() {
     const { bitacore, typesOfAliments = [], typesOfMedicines = [] } = this.state;
@@ -155,16 +170,16 @@ class FeedingOverview extends Component {
       bitacore.map((bitacoreRow, index) => (
         <tr key={bitacoreRow.dia}>
           <td>{`${bitacoreRow.dia}`}</td>
-          <td><FormInput style={{minWidth:"4em"}} onChange={e => this.onChangeInput(e, index, "07:00")} value={`${bitacoreRow["07:00"] !== 0 ? bitacoreRow["07:00"] : ''}`} placeholder={`${bitacoreRow["07:00"]} g`} /></td>
-          <td><FormInput style={{minWidth:"4em"}} onChange={e => this.onChangeInput(e, index, "07:30")} value={`${bitacoreRow["07:30"] !== 0 ? bitacoreRow["07:30"] : ''}`} placeholder={`${bitacoreRow["07:30"]} g`} /></td>
-          <td><FormInput style={{minWidth:"4em"}} onChange={e => this.onChangeInput(e, index, "09:30")} value={`${bitacoreRow["09:30"] !== 0 ? bitacoreRow["09:30"] : ''}`} placeholder={`${bitacoreRow["09:30"]} g`} /></td>
-          <td><FormInput style={{minWidth:"4em"}} onChange={e => this.onChangeInput(e, index, "11:00")} value={`${bitacoreRow["11:00"] !== 0 ? bitacoreRow["11:00"] : ''}`} placeholder={`${bitacoreRow["11:00"]} g`} /></td>
-          <td><FormInput style={{minWidth:"4em"}} onChange={e => this.onChangeInput(e, index, "12:00")} value={`${bitacoreRow["12:00"] !== 0 ? bitacoreRow["12:00"] : ''}`} placeholder={`${bitacoreRow["12:00"]} g`} /></td>
-          <td><FormInput style={{minWidth:"4em"}} onChange={e => this.onChangeInput(e, index, "13:00")} value={`${bitacoreRow["13:00"] !== 0 ? bitacoreRow["13:00"] : ''}`} placeholder={`${bitacoreRow["13:00"]} g`} /></td>
-          <td><FormInput style={{minWidth:"4em"}} onChange={e => this.onChangeInput(e, index, "15:00")} value={`${bitacoreRow["15:00"] !== 0 ? bitacoreRow["15:00"] : ''}`} placeholder={`${bitacoreRow["15:00"]} g`} /></td>
-          <td><FormInput style={{minWidth:"4em"}} onChange={e => this.onChangeInput(e, index, "16:30")} value={`${bitacoreRow["16:30"] !== 0 ? bitacoreRow["16:30"] : ''}`} placeholder={`${bitacoreRow["16:30"]} g`} /></td>
-          <td><FormInput style={{minWidth:"4em"}} type="number" min="0" onChange={e => this.onChangeInput(e, index, "cellNumbers")} value={`${bitacoreRow.cellNumbers}`} /></td>
-          <td><FormInput style={{minWidth:"4em"}} onChange={e => this.onChangeInput(e, index, "totalPerDay")} value={`${bitacoreRow.totalPerDay}`} disabled /></td>
+          <td><FormInput style={{ minWidth: "4em" }} onChange={e => this.onChangeInput(e, index, "07:00")} value={`${bitacoreRow["07:00"] !== 0 ? bitacoreRow["07:00"] : ''}`} placeholder={`${bitacoreRow["07:00"]} g`} /></td>
+          <td><FormInput style={{ minWidth: "4em" }} onChange={e => this.onChangeInput(e, index, "07:30")} value={`${bitacoreRow["07:30"] !== 0 ? bitacoreRow["07:30"] : ''}`} placeholder={`${bitacoreRow["07:30"]} g`} /></td>
+          <td><FormInput style={{ minWidth: "4em" }} onChange={e => this.onChangeInput(e, index, "09:30")} value={`${bitacoreRow["09:30"] !== 0 ? bitacoreRow["09:30"] : ''}`} placeholder={`${bitacoreRow["09:30"]} g`} /></td>
+          <td><FormInput style={{ minWidth: "4em" }} onChange={e => this.onChangeInput(e, index, "11:00")} value={`${bitacoreRow["11:00"] !== 0 ? bitacoreRow["11:00"] : ''}`} placeholder={`${bitacoreRow["11:00"]} g`} /></td>
+          <td><FormInput style={{ minWidth: "4em" }} onChange={e => this.onChangeInput(e, index, "12:00")} value={`${bitacoreRow["12:00"] !== 0 ? bitacoreRow["12:00"] : ''}`} placeholder={`${bitacoreRow["12:00"]} g`} /></td>
+          <td><FormInput style={{ minWidth: "4em" }} onChange={e => this.onChangeInput(e, index, "13:00")} value={`${bitacoreRow["13:00"] !== 0 ? bitacoreRow["13:00"] : ''}`} placeholder={`${bitacoreRow["13:00"]} g`} /></td>
+          <td><FormInput style={{ minWidth: "4em" }} onChange={e => this.onChangeInput(e, index, "15:00")} value={`${bitacoreRow["15:00"] !== 0 ? bitacoreRow["15:00"] : ''}`} placeholder={`${bitacoreRow["15:00"]} g`} /></td>
+          <td><FormInput style={{ minWidth: "4em" }} onChange={e => this.onChangeInput(e, index, "16:30")} value={`${bitacoreRow["16:30"] !== 0 ? bitacoreRow["16:30"] : ''}`} placeholder={`${bitacoreRow["16:30"]} g`} /></td>
+          <td><FormInput style={{ minWidth: "4em" }} type="number" min="0" onChange={e => this.onChangeInput(e, index, "cellNumbers")} value={`${bitacoreRow.cellNumbers}`} /></td>
+          <td><FormInput style={{ minWidth: "4em" }} onChange={e => this.onChangeInput(e, index, "totalPerDay")} value={`${bitacoreRow.totalPerDay}`} disabled /></td>
           <td>
             <FormSelect
               style={{ minWidth: "100px" }}
@@ -191,8 +206,12 @@ class FeedingOverview extends Component {
       ))
     )
   }
+  onChangeSowing(e) {
+    console.log(e.target.value);
+    this.setState({ sowing: e.target.value }, this.fetchLogbook);
+  }
   render() {
-    const { date, user, canViewOthers, employees } = this.state;
+    const { date, user, canViewOthers, employees, sowing, sowings } = this.state;
     return (
       <div>
         <Container fluid className="main-content-container px-4">
@@ -207,27 +226,35 @@ class FeedingOverview extends Component {
 
           <Row>
 
-          <div className="col-md-12 col-centered" style={{ display: 'flex', justifyContent: 'center', flexWrap: "wrap", }}>
+            <div className="col-md-12 col-centered" style={{ display: 'flex', justifyContent: 'center', flexWrap: "wrap", }}>
               <div className="col-centered" style={{ display: 'flex', justifyContent: 'center' }}>
                 <button className="btn btn-primary mr-4 mb-2" onClick={this.previousMonth}>Anterior</button>
                 {' '}
                 <span className="pt-1" style={{ whiteSpace: 'nowrap', }} >{date.format('MMM-Y')}</span>
                 {' '}
-                <button className="btn btn-primary ml-4 mb-2" onClick={this.nextMonth}>Siguiente</button>              
+                <button className="btn btn-primary ml-4 mb-2" onClick={this.nextMonth}>Siguiente</button>
               </div>
               <div className="col-centered" style={{ display: 'flex', justifyContent: 'center', }}></div>
-              <button className="btn btn-success ml-4 mr-4 mb-2" onClick={this.save}>Guardar</button>            
+              <button className="btn btn-success ml-4 mr-4 mb-2" onClick={this.save}>Guardar</button>
             </div>
             <div className="col-md-12 ml-3 mr-3 mb-2 col-centered user-selector">
               <div style={{ display: 'inline-flex', justifyContent: 'space-evenly', }}>
                 {canViewOthers ? (
                   <FormSelect
-                  onChange={this.onChangeUser}
+                    className="mr-4"
+                    onChange={this.onChangeUser}
                   >
                     <option value={JSON.stringify(user)}>{user.name}</option>
                     {employees.map(employee => <option key={employee.email} value={JSON.stringify(employee)}>{employee.name}</option>)}
                   </FormSelect>
                 ) : null}
+                <FormSelect
+                  value={sowing ? (sowing.sowing ? sowing.sowing : sowing): 'Por defecto'}
+                  onChange={this.onChangeSowing}
+                >
+                  {sowings.map(sowingU => <option key={sowingU.sowing} value={sowingU.sowing}>{sowingU.sowing ? sowingU.sowing: 'Por defecto'}</option>)}
+                </FormSelect>
+                <AddSowingModal save={this.addSowing}/>
               </div>
             </div>
             <Col className="mb-4">

@@ -135,7 +135,7 @@ class UsersOverview extends React.Component {
         year,
         employee: watchingEmployee.email
       })
-      FileDownload(data, `${year}-${month}-bitacora.xlsx`);
+      FileDownload(data, `${year}-${month}-${watchingEmployee.name}-bitacora.xlsx`);
     } catch (error){
       if(error.response){
         if(error.response.statusText === "Not Found"){
