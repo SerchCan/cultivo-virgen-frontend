@@ -250,7 +250,7 @@ class FeedingOverview extends Component {
     this.setState({ sowing: e.target.value }, this.fetchLogbook);
   }
   render() {
-    const { date, user, canViewOthers, employees, sowing, sowings, providers, cells, provider, cell } = this.state;
+    const { date, user, canViewOthers, employees, sowing, sowings, providers, cells } = this.state;
     return (
       <div>
         <Container fluid className="main-content-container px-4">
