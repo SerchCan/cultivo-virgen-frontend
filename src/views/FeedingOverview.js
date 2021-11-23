@@ -142,6 +142,12 @@ class FeedingOverview extends Component {
         typesOfAliments,
         typesOfMedicines
       });
+    } else{
+      this.setState({
+        typesOfAliments,
+        typesOfMedicines
+      });
+
     }
     await this.fetchLogbook();
   }
