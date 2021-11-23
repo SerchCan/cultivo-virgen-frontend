@@ -202,12 +202,12 @@ class FeedingOverview extends Component {
   previousMonth() {
     const { date } = this.state;
     date.subtract(1, 'month');
-    this.setState({ date, sowing: null }, this.fetchLogbook)
+    this.setState({ date, sowing: null, provider:null, cell:null }, this.fetchLogbook)
   }
   nextMonth() {
     const { date } = this.state;
     date.add(1, 'month');
-    this.setState({ date, sowing: null }, this.fetchLogbook)
+    this.setState({ date, sowing: null, provider:null, cell:null }, this.fetchLogbook)
   }
   mapColumns() {
     const { bitacore, typesOfAliments = [], typesOfMedicines = [] } = this.state;
