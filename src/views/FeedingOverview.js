@@ -256,7 +256,7 @@ class FeedingOverview extends Component {
     this.setState({ sowing: e.target.value }, this.fetchLogbook);
   }
   render() {
-    const { date, user, canViewOthers, employees, sowing, sowings, providers, cells } = this.state;
+    const { date, user, canViewOthers, employees, sowing, sowings, providers, cells, provider,cell } = this.state;
     return (
       <div>
         <Container fluid className="main-content-container px-4">
@@ -306,7 +306,7 @@ class FeedingOverview extends Component {
                   <FormSelect
                     onChange={this.onChangeProvider}
                     >
-                    <option value=""></option>
+                    <option value=" " selected={provider===null}></option>
 
                     {providers.map(Provider => <option key={Provider} value={Provider}>{Provider ? Provider: ''}</option>)}
                   </FormSelect>
@@ -314,7 +314,7 @@ class FeedingOverview extends Component {
                   <FormSelect
                     onChange={this.onChangeCell}
                     >
-                    <option value=""></option>
+                    <option value="" selected={cell===null}></option>
 
                     {cells.map(cell => <option key={cell} value={cell}>{cell ? cell: 'Por defecto'}</option>)}
                   </FormSelect>
