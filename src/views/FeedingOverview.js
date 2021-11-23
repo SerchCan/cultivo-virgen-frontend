@@ -323,6 +323,7 @@ class FeedingOverview extends Component {
                     value={sowing ? (sowing.sowing ? sowing.sowing : sowing): 'Por defecto'}
                     onChange={this.onChangeSowing}
                   >
+                    <option value=""></option>
                     {sowings.map(sowingU => <option key={sowingU.sowing} value={sowingU.sowing}>{sowingU.sowing ? sowingU.sowing: 'Por defecto'}</option>)}
                   </FormSelect>
                   <AddSowingModal save={this.addSowing}/>
