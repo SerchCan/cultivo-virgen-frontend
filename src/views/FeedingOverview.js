@@ -294,13 +294,7 @@ class FeedingOverview extends Component {
                   </FormSelect>
                 ) : null}
                 
-                <FormSelect
-                  value={sowing ? (sowing.sowing ? sowing.sowing : sowing): 'Por defecto'}
-                  onChange={this.onChangeSowing}
-                >
-                  {sowings.map(sowingU => <option key={sowingU.sowing} value={sowingU.sowing}>{sowingU.sowing ? sowingU.sowing: 'Por defecto'}</option>)}
-                </FormSelect>
-                <AddSowingModal save={this.addSowing}/>
+               
                 
               </div>
             </div>
@@ -324,8 +318,17 @@ class FeedingOverview extends Component {
 
                     {cells.map(cell => <option key={cell} value={cell}>{cell ? cell: 'Por defecto'}</option>)}
                   </FormSelect>
-                </div>
+                  <label>Identificador de siembra</label>
+                  <FormSelect
+                    value={sowing ? (sowing.sowing ? sowing.sowing : sowing): 'Por defecto'}
+                    onChange={this.onChangeSowing}
+                  >
+                    {sowings.map(sowingU => <option key={sowingU.sowing} value={sowingU.sowing}>{sowingU.sowing ? sowingU.sowing: 'Por defecto'}</option>)}
+                  </FormSelect>
+                  <AddSowingModal save={this.addSowing}/>
               </div>
+                </div>
+                
             </div>
             <Col className="mb-4">
               <Card small style={{ overflowX: "scroll" }}>

@@ -26,7 +26,7 @@ export default class BasicModalExample extends React.Component {
     const {save} = this.props;
     return (
       <div>
-        <Button className="ml-4" onClick={this.toggle}>Agregar siembra</Button>
+        <Button className="mt-3 mb-3" onClick={this.toggle}>Agregar siembra</Button>
         <Modal open={open} toggle={this.toggle}>
           <ModalHeader>Ingresa Nombre / Identificador de siembra </ModalHeader>
           <ModalBody className="text-center"> 
