@@ -25,7 +25,19 @@ class FeedingOverview extends Component {
       canViewOthers: false,
       employees: [],
       sowings: [],
-      sowing: null
+      sowing: null,
+      cells: [
+        "3x3x2",
+        "4x4x2.5",
+        "Redonda 10 diametro",
+      ],
+      providers:[
+        "Fredy",
+        "El Samoral",
+        "Tlalixcoyan",
+      ],
+      cell: null,
+      provider: null
     };
     this.mapColumns = this.mapColumns.bind(this);
     this.previousMonth = this.previousMonth.bind(this);
@@ -36,6 +48,8 @@ class FeedingOverview extends Component {
     this.save = this.save.bind(this);
     this.updateRowTotals = this.updateRowTotals.bind(this);
     this.onChangeUser = this.onChangeUser.bind(this);
+    this.onChangeProvider = this.onChangeProvider.bind(this);
+    this.onChangeCell = this.onChangeCell.bind(this);
     this.onChangeSowing = this.onChangeSowing.bind(this);
     this.addSowing = this.addSowing.bind(this)
   }
@@ -68,19 +82,33 @@ class FeedingOverview extends Component {
     this.setState({ bitacore: initial })
   }
   async fetchLogbook(manualSowing=false) {
-    const { date, watchingEmployee, sowing } = this.state;
+    const { date, watchingEmployee, sowing, provider, cell } = this.state;
     let month = date.format("M")
     let year = date.format("Y")
     const { data } = await api.getLogbook({
       month,
       year,
       employee: watchingEmployee.email,
-      sowing: sowing === "" ? null : sowing
+      sowing: sowing === "" ? null : sowing,
+      provider: provider === "" ? null : provider,
+      cell: cell === "" ? null : cell
+    })
+    console.log({
+      fetchedBy:{
+        month,
+        year,
+        employee: watchingEmployee.email,
+        sowing: sowing === "" ? null : sowing,
+        provider: provider === "" ? null : provider,
+        cell: cell === "" ? null : cell
+      }
     })
     let { data: sowings } = await api.getLogbookSowings({
       month,
       year,
       employee: watchingEmployee.email,
+      provider: provider === "" ? null : provider,
+      cell: cell === "" ? null : cell
     })
     if(manualSowing){
       sowings.push({sowing:sowing});
@@ -119,14 +147,16 @@ class FeedingOverview extends Component {
   }
 
   async save() {
-    const { date, bitacore, watchingEmployee, sowing } = this.state;
+    const { date, bitacore, watchingEmployee, sowing, provider, cell } = this.state;
     let month = date.format("M")
     let year = date.format("Y")
     await api.saveLogbook({
       date: `${year}-${month}-01`,
       employee: watchingEmployee.email,
       logbooks: JSON.stringify(bitacore),
-      sowing: sowing === "" ? null : sowing
+      sowing: sowing === "" ? null : sowing,
+      provider: provider === "" ? null : provider,
+      cell: cell === "" ? null : cell
     });
     alert("Guardado correctamente");
   }
@@ -142,6 +172,15 @@ class FeedingOverview extends Component {
   async onChangeUser(e) {
     console.log(e.target.value);
     await this.setState({ watchingEmployee: JSON.parse(e.target.value) });
+    await this.fetchLogbook()
+  }
+  async onChangeProvider(e) {
+    await this.setState({ provider: e.target.value });
+    await this.fetchLogbook()
+  }
+  async onChangeCell(e) {
+    console.log(e.target.value);
+    await this.setState({ cell: e.target.value });
     await this.fetchLogbook()
   }
   updateRowTotals(row) {
@@ -170,14 +209,14 @@ class FeedingOverview extends Component {
       bitacore.map((bitacoreRow, index) => (
         <tr key={bitacoreRow.dia}>
           <td>{`${bitacoreRow.dia}`}</td>
-          <td><FormInput style={{ minWidth: "4em" }} onChange={e => this.onChangeInput(e, index, "07:00")} value={`${bitacoreRow["07:00"] !== 0 ? bitacoreRow["07:00"] : ''}`} placeholder={`${bitacoreRow["07:00"]} g`} /></td>
-          <td><FormInput style={{ minWidth: "4em" }} onChange={e => this.onChangeInput(e, index, "07:30")} value={`${bitacoreRow["07:30"] !== 0 ? bitacoreRow["07:30"] : ''}`} placeholder={`${bitacoreRow["07:30"]} g`} /></td>
-          <td><FormInput style={{ minWidth: "4em" }} onChange={e => this.onChangeInput(e, index, "09:30")} value={`${bitacoreRow["09:30"] !== 0 ? bitacoreRow["09:30"] : ''}`} placeholder={`${bitacoreRow["09:30"]} g`} /></td>
-          <td><FormInput style={{ minWidth: "4em" }} onChange={e => this.onChangeInput(e, index, "11:00")} value={`${bitacoreRow["11:00"] !== 0 ? bitacoreRow["11:00"] : ''}`} placeholder={`${bitacoreRow["11:00"]} g`} /></td>
-          <td><FormInput style={{ minWidth: "4em" }} onChange={e => this.onChangeInput(e, index, "12:00")} value={`${bitacoreRow["12:00"] !== 0 ? bitacoreRow["12:00"] : ''}`} placeholder={`${bitacoreRow["12:00"]} g`} /></td>
-          <td><FormInput style={{ minWidth: "4em" }} onChange={e => this.onChangeInput(e, index, "13:00")} value={`${bitacoreRow["13:00"] !== 0 ? bitacoreRow["13:00"] : ''}`} placeholder={`${bitacoreRow["13:00"]} g`} /></td>
-          <td><FormInput style={{ minWidth: "4em" }} onChange={e => this.onChangeInput(e, index, "15:00")} value={`${bitacoreRow["15:00"] !== 0 ? bitacoreRow["15:00"] : ''}`} placeholder={`${bitacoreRow["15:00"]} g`} /></td>
-          <td><FormInput style={{ minWidth: "4em" }} onChange={e => this.onChangeInput(e, index, "16:30")} value={`${bitacoreRow["16:30"] !== 0 ? bitacoreRow["16:30"] : ''}`} placeholder={`${bitacoreRow["16:30"]} g`} /></td>
+          <td><FormInput style={{ minWidth: "4em" }} onChange={e => this.onChangeInput(e, index, "07:00")} value={`${bitacoreRow["07:00"] !== 0 ? bitacoreRow["07:00"] : ''}`} placeholder={`${bitacoreRow["07:00"]} kg`} /></td>
+          <td><FormInput style={{ minWidth: "4em" }} onChange={e => this.onChangeInput(e, index, "07:30")} value={`${bitacoreRow["07:30"] !== 0 ? bitacoreRow["07:30"] : ''}`} placeholder={`${bitacoreRow["07:30"]} kg`} /></td>
+          <td><FormInput style={{ minWidth: "4em" }} onChange={e => this.onChangeInput(e, index, "09:30")} value={`${bitacoreRow["09:30"] !== 0 ? bitacoreRow["09:30"] : ''}`} placeholder={`${bitacoreRow["09:30"]} kg`} /></td>
+          <td><FormInput style={{ minWidth: "4em" }} onChange={e => this.onChangeInput(e, index, "11:00")} value={`${bitacoreRow["11:00"] !== 0 ? bitacoreRow["11:00"] : ''}`} placeholder={`${bitacoreRow["11:00"]} kg`} /></td>
+          <td><FormInput style={{ minWidth: "4em" }} onChange={e => this.onChangeInput(e, index, "12:00")} value={`${bitacoreRow["12:00"] !== 0 ? bitacoreRow["12:00"] : ''}`} placeholder={`${bitacoreRow["12:00"]} kg`} /></td>
+          <td><FormInput style={{ minWidth: "4em" }} onChange={e => this.onChangeInput(e, index, "13:00")} value={`${bitacoreRow["13:00"] !== 0 ? bitacoreRow["13:00"] : ''}`} placeholder={`${bitacoreRow["13:00"]} kg`} /></td>
+          <td><FormInput style={{ minWidth: "4em" }} onChange={e => this.onChangeInput(e, index, "15:00")} value={`${bitacoreRow["15:00"] !== 0 ? bitacoreRow["15:00"] : ''}`} placeholder={`${bitacoreRow["15:00"]} kg`} /></td>
+          <td><FormInput style={{ minWidth: "4em" }} onChange={e => this.onChangeInput(e, index, "16:30")} value={`${bitacoreRow["16:30"] !== 0 ? bitacoreRow["16:30"] : ''}`} placeholder={`${bitacoreRow["16:30"]} kg`} /></td>
           <td><FormInput style={{ minWidth: "4em" }} type="number" min="0" onChange={e => this.onChangeInput(e, index, "cellNumbers")} value={`${bitacoreRow.cellNumbers}`} /></td>
           <td><FormInput style={{ minWidth: "4em" }} onChange={e => this.onChangeInput(e, index, "totalPerDay")} value={`${bitacoreRow.totalPerDay}`} disabled /></td>
           <td>
@@ -211,7 +250,7 @@ class FeedingOverview extends Component {
     this.setState({ sowing: e.target.value }, this.fetchLogbook);
   }
   render() {
-    const { date, user, canViewOthers, employees, sowing, sowings } = this.state;
+    const { date, user, canViewOthers, employees, sowing, sowings, providers, cells, provider, cell } = this.state;
     return (
       <div>
         <Container fluid className="main-content-container px-4">
@@ -248,6 +287,7 @@ class FeedingOverview extends Component {
                     {employees.map(employee => <option key={employee.email} value={JSON.stringify(employee)}>{employee.name}</option>)}
                   </FormSelect>
                 ) : null}
+                
                 <FormSelect
                   value={sowing ? (sowing.sowing ? sowing.sowing : sowing): 'Por defecto'}
                   onChange={this.onChangeSowing}
@@ -255,6 +295,30 @@ class FeedingOverview extends Component {
                   {sowings.map(sowingU => <option key={sowingU.sowing} value={sowingU.sowing}>{sowingU.sowing ? sowingU.sowing: 'Por defecto'}</option>)}
                 </FormSelect>
                 <AddSowingModal save={this.addSowing}/>
+                
+              </div>
+            </div>
+            <div className="col-md-12 ml-3 mr-3 mb-2 col-centered user-selector">
+
+              <div style={{ display: 'inline-flex', justifyContent: 'space-evenly', }}>
+                <div className="ml-2 mr-2">
+                  <label>Proveedor</label>
+                  <FormSelect
+                    onChange={this.onChangeProvider}
+                    >
+                    <option value=""></option>
+
+                    {providers.map(Provider => <option key={Provider} value={Provider}>{Provider ? Provider: ''}</option>)}
+                  </FormSelect>
+                  <label>Identificador de jaula</label>
+                  <FormSelect
+                    onChange={this.onChangeCell}
+                    >
+                    <option value=""></option>
+
+                    {cells.map(cell => <option key={cell} value={cell}>{cell ? cell: 'Por defecto'}</option>)}
+                  </FormSelect>
+                </div>
               </div>
             </div>
             <Col className="mb-4">
@@ -272,7 +336,7 @@ class FeedingOverview extends Component {
                       <th scope="col">15:00</th>
                       <th scope="col">16:30</th>
                       <th scope="col"># de jaulas</th>
-                      <th scope="col">Total por día (g)</th>
+                      <th scope="col">Total por día (kg)</th>
                       <th scope="col"># de alimento</th>
                       <th scope="col">medicamento</th>
                       <th scope="col">mortalidad</th>
