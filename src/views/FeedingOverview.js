@@ -196,7 +196,7 @@ class FeedingOverview extends Component {
     sumColumns.forEach(column => {
       total += Number(bitacore[row][column]);
     });
-    bitacore[row].totalPerDay = total * Number(bitacore[row].cellNumbers);
+    bitacore[row].totalPerDay = Number(total * Number(bitacore[row].cellNumbers)).toFixed(2);
     this.setState({ bitacore });
   }
   previousMonth() {
